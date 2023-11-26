@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
-mongoose.set('strictQuery', false);
+mongoose.set("strictQuery", false);
 
 var mongoURL =
-  "mongodb+srv://kosarvillage:kosarvillage@cluster0.93sie2d.mongodb.net/kosar";
+  "mongodb+srv://kosarvillage:kosarvillage@cluster0.93sie2d.mongodb.net/testing";
 
 mongoose.connect(mongoURL, { useUnifiedTopology: true, useNewUrlParser: true });
 

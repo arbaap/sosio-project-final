@@ -9,7 +9,7 @@ const Welcome = () => {
         <div className="logo-container">
           <img src={logo} alt="Logo" className="logo" />
         </div>
-        <h2>Selamat Datang di</h2>
+        <h2>Selamat Datang di </h2>
         <h1>Sistem Informasi Pengaduan Masyarakat </h1>
         <h1>Desa Kosar</h1>
         <h2 className="msk">Masuk Sebagai</h2>
