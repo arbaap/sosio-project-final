@@ -2,7 +2,7 @@
 
 ## Kelompok 5
 
-1. Dani Ali Kinan2
+1. Dani Ali Kinan
 2. Rico Chandra
 3. M Rusdi Rudiansyah
 4. Arba Adhy Pamungkas
