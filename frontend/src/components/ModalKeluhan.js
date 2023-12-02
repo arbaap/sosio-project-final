@@ -5,7 +5,19 @@ import Card from "react-bootstrap/Card";
 
 import { BsArrowRightSquare, BsTriangleFill, BsTriangle } from "react-icons/bs";
 
+import "../index.css";
+
 function ModalKeluhan({ keluhan, index }) {
+  const [vote, setVote] = useState(keluhan.vote);
+
+  const [hasVoted, setHasVoted] = useState(false);
+  useEffect(() => {
+    const hasVotedBefore = localStorage.getItem(`voted-${keluhan._id}`);
+    if (hasVotedBefore) {
+      setHasVoted(true);
+    }
+  }, [keluhan._id]);
+
   let statusClass = "";
   switch (keluhan.status) {
     case "Pending":
@@ -22,17 +34,6 @@ function ModalKeluhan({ keluhan, index }) {
     default:
       break;
   }
-
-  const [vote, setVote] = useState(keluhan.vote);
-
-  const [hasVoted, setHasVoted] = useState(false);
-
-  useEffect(() => {
-    const hasVotedBefore = localStorage.getItem(`voted-${keluhan._id}`);
-    if (hasVotedBefore) {
-      setHasVoted(true);
-    }
-  }, [keluhan._id]);
 
   function handleVoteUp() {
     if (hasVoted) {

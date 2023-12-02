@@ -1,10 +1,12 @@
 import axios from "axios";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Tab, Col, Nav, Row } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { Bar } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
 import { LinearScale } from "chart.js";
+
+import "../index.css";
 
 function Adminscreen() {
   const [showAdminContent, setShowAdminContent] = useState(false);
@@ -43,6 +45,9 @@ function Adminscreen() {
                 <Nav.Item>
                   <Nav.Link eventKey="laporan">Laporan</Nav.Link>
                 </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="drivers">Drivers</Nav.Link>
+                </Nav.Item>
               </Nav>
             </Col>
             <Col sm={9}>
@@ -54,6 +59,10 @@ function Adminscreen() {
                 <Tab.Pane eventKey="laporan">
                   <Pengaduans />
                   <Keluhans />
+                </Tab.Pane>
+
+                <Tab.Pane eventKey="drivers">
+                  <Drivers />
                 </Tab.Pane>
               </Tab.Content>
             </Col>
@@ -528,6 +537,202 @@ export function Keluhans() {
 
   function Pagination({ currentPage, itemsPerPage, totalItems, onPageChange }) {
     const pageNumbers = Math.ceil(totalItems / itemsPerPage);
+
+    return (
+      <nav>
+        <ul className="pagination">
+          {Array.from({ length: pageNumbers }, (_, i) => i + 1).map(
+            (pageNumber) => (
+              <li
+                key={pageNumber}
+                className={`page-item${
+                  currentPage === pageNumber ? " active" : ""
+                }`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() => onPageChange(pageNumber)}
+                >
+                  {pageNumber}
+                </button>
+              </li>
+            )
+          )}
+        </ul>
+      </nav>
+    );
+  }
+}
+
+export function Drivers() {
+  const [drivers, setdrivers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(5);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("/api/drivers/getalldrivers");
+      setdrivers(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const indexOfLastKeluhan = currentPage * perPage;
+  const indexOfFirstKeluhan = indexOfLastKeluhan - perPage;
+  const currentKeluhans = drivers.slice(
+    indexOfFirstKeluhan,
+    indexOfLastKeluhan
+  );
+
+  // async function selesaiKeluhan(keluhanid) {
+  //   try {
+  //     const result = await (
+  //       await axios.post("/api/keluhans/selesaikeluhan", {
+  //         keluhanid,
+  //       })
+  //     ).data;
+  //     console.log(result);
+  //     Swal.fire("Okay", "Keluhan Selesai", "success").then((result) => {
+  //       window.location.reload();
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //     Swal.fire("Oops", "Something went wrong", "error");
+  //   }
+  // }
+
+  const terimaDriver = async (driverid) => {
+    try {
+      const result = await (
+        await axios.post("/api/drivers/terimadriver", {
+          driverid,
+        })
+      ).data;
+      console.log(result);
+      Swal.fire("Okay", "Driver Diterima", "success").then((result) => {
+        window.location.reload();
+      });
+    } catch (error) {
+      console.log(error);
+      Swal.fire("Oops", "Something went wrong", "error");
+    }
+  };
+
+  const tolakDriver = async (driverid) => {
+    try {
+      const result = await Swal.fire({
+        title: "Alasan Penolakan",
+        input: "textarea",
+        inputPlaceholder: "Masukkan alasan penolakan",
+        showCancelButton: true,
+        confirmButtonText: "Tolak",
+        cancelButtonText: "Batal",
+        showLoaderOnConfirm: true,
+        preConfirm: (alasan) => {
+          return axios
+            .post("/api/drivers/tolakdriver", {
+              driverid,
+              alasanPenolakan: alasan,
+            })
+            .then((response) => {
+              if (response.data === "Driver ditolak") {
+                Swal.fire(
+                  "Okay",
+                  "Driver Ditolak dengan alasan : \n " + alasan,
+                  "success"
+                ).then((result) => {
+                  window.location.reload();
+                });
+              } else {
+                Swal.fire("Oops", "Something went wrong", "error");
+              }
+            })
+            .catch((error) => {
+              Swal.fire("Oops", "Something went wrong", "error");
+            });
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      });
+
+      if (result.isDismissed) {
+        return;
+      }
+    } catch (error) {
+      console.log(error);
+      Swal.fire("Oops", "Something went wrong", "error");
+    }
+  };
+
+  return (
+    <div className="row">
+      <div className="col-md-12">
+        <h1>Daftar Driver</h1>
+        <table className="table table-bordered">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Nama Lengkap</th>
+              <th>No Telepon</th>
+              <th>Prov</th>
+              <th>Kab</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentKeluhans.map((drivers, index) => {
+              return (
+                <tr key={drivers._id}>
+                  <td>{index + indexOfFirstKeluhan + 1}</td>
+                  <td>{drivers.namaLengkap}</td>
+
+                  <td>{drivers.noTelepon}</td>
+                  <td>{drivers.provinsi}</td>
+                  <td>{drivers.kabupatenKota}</td>
+
+                  <td className="col-1">
+                    {drivers.status !== "pending" && (
+                      <button
+                        className="terimakeluhan btn-success"
+                        onClick={() => terimaDriver(drivers._id)}
+                      >
+                        Terima
+                      </button>
+                    )}
+                    {drivers.status !== "pending" && (
+                      <button
+                        className="tolakkeluhan btn-danger"
+                        onClick={() => tolakDriver(drivers._id)}
+                      >
+                        Tolak
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        <Pagination
+          currentPage={currentPage}
+          perPage={perPage}
+          totalKeluhans={drivers.length}
+          onPageChange={handlePageChange}
+        />
+      </div>
+    </div>
+  );
+
+  function Pagination({ currentPage, perPage, totalDrivers, onPageChange }) {
+    const pageNumbers = Math.ceil(totalDrivers / perPage);
 
     return (
       <nav>
