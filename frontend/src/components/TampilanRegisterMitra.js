@@ -17,10 +17,16 @@ function TampilanRegisterMitra() {
   const [alamat, setAlamat] = useState("");
   const [provinsi, setProvinsi] = useState("");
   const [kabupatenKota, setKabupatenKota] = useState("");
-  const [kecamatanDesa, setKecamatanDesa] = useState("");
   const [allProvinces, setAllProvinces] = useState([]);
-  const [citiesByProvince, setCitiesByProvince] = useState([]);
-  const [allKecamatanDesa, setAllKecamatanDesa] = useState([]);
+
+  const [allCities, setAllCities] = useState([]);
+  const [allKecamatan, setAllKecamatan] = useState([]);
+
+  const [selectedKecamatan, setSelectedKecamatan] = useState("");
+
+  const apiUrl = "https://api.binderbyte.com";
+  const apiKey =
+    "1e497e09cea285d56ce02eb5ce9497b55de71665ad570a6d6ddbe5daa9927324";
 
   async function daftarMitra() {
     if (
@@ -34,9 +40,10 @@ function TampilanRegisterMitra() {
       !cpassword ||
       !tempatLahir ||
       !tanggalLahir ||
-      !alamat ||
       !provinsi ||
-      !kabupatenKota
+      !kabupatenKota ||
+      !selectedKecamatan ||
+      !alamat
     ) {
       Swal.fire(
         "Peringatan",
@@ -51,6 +58,11 @@ function TampilanRegisterMitra() {
       return;
     }
 
+    const getNamaById = (id, dataArray) => {
+      const selectedData = dataArray.find((data) => data.id === id);
+      return selectedData ? selectedData.name : "";
+    };
+
     const driver = {
       username,
       namaLengkap,
@@ -62,12 +74,11 @@ function TampilanRegisterMitra() {
       cpassword,
       tempatLahir,
       tanggalLahir,
+      provinsi: getNamaById(provinsi, allProvinces),
+      kabupatenKota: getNamaById(kabupatenKota, allCities),
+      kecamatanDesa: getNamaById(selectedKecamatan, allKecamatan),
       alamat,
-      provinsi,
-      kabupatenKota,
     };
-
-    // yang kesimpan di database masih id dari provinsi sama kabupaten kota
 
     try {
       const result = await axios.post("/api/drivers/registermitra", driver);
@@ -82,36 +93,68 @@ function TampilanRegisterMitra() {
   }
 
   useEffect(() => {
+    async function fetchProvinces() {
+      try {
+        const response = await axios.get(
+          `${apiUrl}/wilayah/provinsi?api_key=${apiKey}`
+        );
+        setAllProvinces(response.data.value);
+      } catch (error) {
+        console.error("Error fetching provinces:", error);
+      }
+    }
+
     fetchProvinces();
   }, []);
 
-  const fetchProvinces = async () => {
-    try {
-      const response = await axios.get(
-        "https://dev.farizdotid.com/api/daerahindonesia/provinsi"
-      );
-      setAllProvinces(response.data.provinsi);
-    } catch (error) {
-      console.error("Error fetching provinces:", error);
-    }
-  };
+  const handleProvinsiChange = async (selectedProvinsi) => {
+    setProvinsi(selectedProvinsi);
+    console.log("Provinsi dipilih:", selectedProvinsi);
 
-  const fetchCitiesByProvince = async (provinceId) => {
+    const provinsi = allProvinces.find((p) => p.id === selectedProvinsi);
+    if (provinsi) {
+      console.log("Provinsi Name:", provinsi.name);
+    }
+
     try {
-      const response = await axios.get(
-        `https://dev.farizdotid.com/api/daerahindonesia/kota?id_provinsi=${provinceId}`
+      const responseCities = await axios.get(
+        `${apiUrl}/wilayah/kabupaten?api_key=${apiKey}&id_provinsi=${selectedProvinsi}`
       );
-      setCitiesByProvince(response.data.kota_kabupaten);
+      setAllCities(responseCities.data.value);
+
+      setKabupatenKota("");
+      setAllKecamatan([]);
     } catch (error) {
       console.error("Error fetching cities:", error);
     }
   };
 
-  const handleProvinceChange = (event) => {
-    const selectedProvinceId = event.target.value;
-    console.log("Selected Province ID:", selectedProvinceId);
-    setProvinsi(selectedProvinceId);
-    fetchCitiesByProvince(selectedProvinceId);
+  const handleKabupatenChange = async (selectedKabupaten) => {
+    setKabupatenKota(selectedKabupaten);
+    console.log("Kabupaten/Kota dipilih:", selectedKabupaten);
+
+    const kabupaten = allCities.find((c) => c.id === selectedKabupaten);
+    if (kabupaten) {
+      console.log("Kabupaten/Kota Name:", kabupaten.name);
+    }
+
+    try {
+      const responseKecamatan = await axios.get(
+        `${apiUrl}/wilayah/kecamatan?api_key=${apiKey}&id_kabupaten=${selectedKabupaten}`
+      );
+      setAllKecamatan(responseKecamatan.data.value);
+    } catch (error) {
+      console.error("Error fetching kecamatan:", error);
+    }
+  };
+
+  const handleKecamatanChange = (selectedKecamatan) => {
+    setSelectedKecamatan(selectedKecamatan);
+    console.log("Kecamatan dipilih:", selectedKecamatan);
+    const kecamatan = allKecamatan.find((k) => k.id === selectedKecamatan);
+    if (kecamatan) {
+      console.log("Kecamatan Name:", kecamatan.name);
+    }
   };
 
   return (
@@ -238,28 +281,44 @@ function TampilanRegisterMitra() {
                     as="select"
                     placeholder="Provinsi"
                     value={provinsi}
-                    onChange={handleProvinceChange}
+                    onChange={(e) => handleProvinsiChange(e.target.value)}
                   >
                     <option value="">Pilih Provinsi</option>
                     {allProvinces.map((province) => (
                       <option key={province.id} value={province.id}>
-                        {province.nama}
+                        {province.name}
                       </option>
                     ))}
                   </Form.Control>
                 </Form.Group>
 
-                <Form.Group controlId="formkabupatenKota">
+                <Form.Group controlId="formkabupaten">
                   <Form.Control
                     as="select"
-                    placeholder="Kabupaten / Kota"
+                    placeholder="Kabupaten/Kota"
                     value={kabupatenKota}
-                    onChange={(e) => setKabupatenKota(e.target.value)}
+                    onChange={(e) => handleKabupatenChange(e.target.value)}
                   >
-                    <option value="">Pilih Kabupaten / Kota</option>
-                    {citiesByProvince.map((city) => (
+                    <option value="">Pilih Kabupaten/Kota</option>
+                    {allCities.map((city) => (
                       <option key={city.id} value={city.id}>
-                        {city.nama}
+                        {city.name}
+                      </option>
+                    ))}
+                  </Form.Control>
+                </Form.Group>
+
+                <Form.Group controlId="formkecamatan">
+                  <Form.Control
+                    as="select"
+                    placeholder="Kecamatan"
+                    value={selectedKecamatan}
+                    onChange={(e) => handleKecamatanChange(e.target.value)}
+                  >
+                    <option value="">Pilih Kecamatan</option>
+                    {allKecamatan.map((kecamatan) => (
+                      <option key={kecamatan.id} value={kecamatan.id}>
+                        {kecamatan.name}
                       </option>
                     ))}
                   </Form.Control>

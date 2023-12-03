@@ -50,6 +50,9 @@ const driverSchema = mongoose.Schema(
     kabupatenKota: {
       type: String,
     },
+    kecamatanDesa: {
+      type: String,
+    },
     status: {
       type: String,
       rqeuired: true,

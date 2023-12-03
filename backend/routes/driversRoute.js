@@ -14,9 +14,10 @@ router.post("/registermitra", async (req, res) => {
     password: req.body.password,
     tempatLahir: req.body.tempatLahir,
     tanggalLahir: req.body.tanggalLahir,
-    alamat: req.body.alamat,
     provinsi: req.body.provinsi,
     kabupatenKota: req.body.kabupatenKota,
+    kecamatanDesa: req.body.kecamatanDesa,
+    alamat: req.body.alamat,
   });
   try {
     const driver = await newDriver.save();
