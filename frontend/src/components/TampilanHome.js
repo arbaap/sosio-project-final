@@ -30,14 +30,13 @@ function TampilanHome() {
 export default TampilanHome;
 
 export function HomeJek() {
-  const showAlert = () => {
-    Swal.fire({
-      title: "Sabar ya!",
-      text: "Fitur ini akan segera tersedia sebentar lagi",
-      icon: "info",
-      confirmButtonText: "Okay",
-    });
+  const redirectToWhatsApp = () => {
+    const whatsappNumber = "6281223991511";
+    const whatsappLink = `https://wa.me/${whatsappNumber}`;
+
+    window.open(whatsappLink, "_blank");
   };
+
   return (
     <div className="row justify-content-center">
       <div class="product-catagories-wrapper pt-3">
@@ -48,7 +47,7 @@ export function HomeJek() {
           <div class="product-catagory-wrap">
             <div class="container">
               <div class="card mb-3 catagory-card">
-                <div class="card-body" onClick={showAlert}>
+                <div class="card-body" onClick={redirectToWhatsApp}>
                   <img className="img-scooter" src={scooter} alt="" />
                   <h2 className="text-center">UINJEK</h2>
                 </div>

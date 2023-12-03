@@ -53,6 +53,26 @@ function TampilanRegisterMitra() {
       return;
     }
 
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      Swal.fire("Peringatan", "Format email tidak valid", "warning");
+      return;
+    }
+
+    if (!noTelepon.match(/^\d+$/)) {
+      Swal.fire(
+        "Peringatan",
+        "Nomor telepon hanya boleh berisi angka",
+        "warning"
+      );
+      return;
+    }
+
+    // Validasi panjang password
+    if (password.length < 8) {
+      Swal.fire("Peringatan", "Password harus minimal 8 karakter", "warning");
+      return;
+    }
+
     if (password !== cpassword) {
       Swal.fire("Peringatan", "Kata sandi tidak cocok", "warning");
       return;
@@ -157,6 +177,23 @@ function TampilanRegisterMitra() {
     }
   };
 
+  const [validation, setValidation] = useState({
+    username: true,
+    namaLengkap: true,
+  });
+
+  const getMaxDate = () => {
+    const today = new Date();
+    const minBirthDate = new Date(
+      today.getFullYear() - 17,
+      today.getMonth(),
+      today.getDate() + 1
+    );
+
+    const maxDate = minBirthDate.toISOString().split("T")[0];
+    return maxDate;
+  };
+
   return (
     <div className="inic container">
       <div className="tampilanhome">
@@ -172,8 +209,17 @@ function TampilanRegisterMitra() {
                     value={username}
                     onChange={(e) => {
                       setUsername(e.target.value);
+                      setValidation((prevValidation) => ({
+                        ...prevValidation,
+                        username: e.target.value.length > 0,
+                      }));
                     }}
                   />
+                  {!validation.username && (
+                    <Form.Text className="text-danger">
+                      Username wajib diisi
+                    </Form.Text>
+                  )}
                 </Form.Group>
 
                 <Form.Group controlId="formnamaLengkap">
@@ -183,75 +229,148 @@ function TampilanRegisterMitra() {
                     value={namaLengkap}
                     onChange={(e) => {
                       setNamaLengkap(e.target.value);
+                      setValidation((prevValidation) => ({
+                        ...prevValidation,
+                        namaLengkap: e.target.value.length > 0,
+                      }));
                     }}
                   />
+                  {!validation.namaLengkap && (
+                    <Form.Text className="text-danger">
+                      Nama Lengkap wajib diisi
+                    </Form.Text>
+                  )}
                 </Form.Group>
 
                 <Form.Group controlId="formNIM">
                   <Form.Control
-                    type="text"
-                    placeholder="NIM"
+                    type="tel"
+                    placeholder="Nomor Induk Mahasiswa ( NIM )"
                     value={noNIM}
                     onChange={(e) => {
                       setNoNim(e.target.value);
+                      setValidation((prevValidation) => ({
+                        ...prevValidation,
+                        noNIM: !e.target.value || e.target.value.match(/^\d+$/),
+                      }));
                     }}
+                    pattern="[0-9]*"
+                    minLength="15"
+                    title="Input NIM dengan angka yang benar"
                   />
+                  {!validation.noNIM && noNIM.length > 0 && (
+                    <Form.Text className="text-danger">
+                      Input NIM dengan angka yang benar
+                    </Form.Text>
+                  )}
                 </Form.Group>
 
                 <Form.Group controlId="formKTP">
                   <Form.Control
-                    type="text"
-                    placeholder="KTP"
+                    type="tel"
+                    placeholder="Kartu Tanda Penduduk ( KTP )"
                     value={noKTP}
                     onChange={(e) => {
                       setNoKTP(e.target.value);
+                      setValidation((prevValidation) => ({
+                        ...prevValidation,
+                        noKTP: !e.target.value || e.target.value.match(/^\d+$/),
+                      }));
                     }}
+                    pattern="[0-9]*"
+                    minLength="15"
+                    title="Input KTP dengan angka yang benar"
                   />
+                  {!validation.noKTP && noKTP.length > 0 && (
+                    <Form.Text className="text-danger">
+                      Input KTP dengan angka yang benar
+                    </Form.Text>
+                  )}
                 </Form.Group>
 
                 <Form.Group controlId="formEmail">
                   <Form.Control
-                    type="text"
+                    type="email"
                     placeholder="Email"
                     value={email}
                     onChange={(e) => {
                       setEmail(e.target.value);
+                      setValidation((prevValidation) => ({
+                        ...prevValidation,
+                        email:
+                          !e.target.value ||
+                          /^\S+@\S+\.\S+$/.test(e.target.value),
+                      }));
                     }}
                   />
+                  {!validation.email && email.length > 0 && (
+                    <Form.Text className="text-danger">
+                      Format email tidak valid
+                    </Form.Text>
+                  )}
                 </Form.Group>
 
                 <Form.Group controlId="formnoTelepon">
                   <Form.Control
-                    type="number"
+                    type="tel"
                     placeholder="No Telepon"
                     value={noTelepon}
                     onChange={(e) => {
                       setNoTelepon(e.target.value);
+                      setValidation((prevValidation) => ({
+                        ...prevValidation,
+                        noTelepon:
+                          !e.target.value || e.target.value.match(/^\d+$/),
+                      }));
                     }}
                     pattern="[0-9]*"
+                    minLength="11"
+                    title="Nomor telepon hanya boleh berisi angka"
                   />
+                  {!validation.noTelepon && noTelepon.length > 0 && (
+                    <Form.Text className="text-danger">
+                      Nomor telepon hanya boleh berisi angka
+                    </Form.Text>
+                  )}
                 </Form.Group>
 
                 <Form.Group controlId="formpassword">
                   <Form.Control
-                    type="text"
-                    placeholder="Password"
+                    type="password"
+                    placeholder="Password (minimal 8 karakter)"
                     value={password}
                     onChange={(e) => {
                       setPassword(e.target.value);
                     }}
+                    minLength="8"
                   />
+                  {password.length > 0 && password.length < 8 && (
+                    <Form.Text className="text-danger">
+                      Password harus minimal 8 karakter
+                    </Form.Text>
+                  )}
                 </Form.Group>
 
                 <Form.Group controlId="formcpassword">
                   <Form.Control
-                    type="text"
+                    type="password"
                     placeholder="Confirm Password"
                     value={cpassword}
                     onChange={(e) => {
                       setCPassword(e.target.value);
                     }}
+                    minLength="8"
                   />
+                  {cpassword.length > 0 && cpassword.length < 8 && (
+                    <Form.Text className="text-danger">
+                      Password harus minimal 8 karakter
+                    </Form.Text>
+                  )}
+                  {cpassword !== password && (
+                    <Form.Text className="text-danger">
+                      Confirm Password harus sama dengan Password
+                    </Form.Text>
+                  )}
                 </Form.Group>
 
                 <Form.Group controlId="formtempatLahir">
@@ -270,6 +389,8 @@ function TampilanRegisterMitra() {
                     type="date"
                     placeholder="Tanggal Lahir"
                     value={tanggalLahir}
+                    max={getMaxDate()}
+                    onKeyDown={(e) => e.preventDefault()}
                     onChange={(e) => {
                       setTanggalLahir(e.target.value);
                     }}

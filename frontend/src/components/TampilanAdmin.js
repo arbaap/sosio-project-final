@@ -59,6 +59,7 @@ function Adminscreen() {
                 <Tab.Pane eventKey="laporan">
                   <Pengaduans />
                   <Keluhans />
+                  <Driver />
                 </Tab.Pane>
 
                 <Tab.Pane eventKey="drivers">
@@ -586,9 +587,13 @@ export function Drivers() {
     setCurrentPage(pageNumber);
   };
 
+  const filteredDrivers = drivers.filter(
+    (driver) => driver.status === "Pending"
+  );
+
   const indexOfLastKeluhan = currentPage * perPage;
   const indexOfFirstKeluhan = indexOfLastKeluhan - perPage;
-  const currentKeluhans = drivers.slice(
+  const currentKeluhans = filteredDrivers.slice(
     indexOfFirstKeluhan,
     indexOfLastKeluhan
   );
@@ -684,6 +689,7 @@ export function Drivers() {
               <th>No Telepon</th>
               <th>Prov</th>
               <th>Kab</th>
+              <th>Status</th>
               <th>Aksi</th>
             </tr>
           </thead>
@@ -697,6 +703,7 @@ export function Drivers() {
                   <td>{drivers.noTelepon}</td>
                   <td>{drivers.provinsi}</td>
                   <td>{drivers.kabupatenKota}</td>
+                  <td>{drivers.status}</td>
 
                   <td className="col-1">
                     {drivers.status !== "pending" && (
@@ -725,6 +732,126 @@ export function Drivers() {
           currentPage={currentPage}
           perPage={perPage}
           totalKeluhans={drivers.length}
+          onPageChange={handlePageChange}
+        />
+      </div>
+    </div>
+  );
+
+  function Pagination({ currentPage, perPage, totalDrivers, onPageChange }) {
+    const pageNumbers = Math.ceil(totalDrivers / perPage);
+
+    return (
+      <nav>
+        <ul className="pagination">
+          {Array.from({ length: pageNumbers }, (_, i) => i + 1).map(
+            (pageNumber) => (
+              <li
+                key={pageNumber}
+                className={`page-item${
+                  currentPage === pageNumber ? " active" : ""
+                }`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() => onPageChange(pageNumber)}
+                >
+                  {pageNumber}
+                </button>
+              </li>
+            )
+          )}
+        </ul>
+      </nav>
+    );
+  }
+}
+
+export function Driver() {
+  const [drivers, setdrivers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(5);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("/api/drivers/getalldrivers");
+      setdrivers(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const indexOfLastDriver = currentPage * perPage;
+  const indexOfFirstDriver = indexOfLastDriver - perPage;
+  const currentDrives = drivers.slice(indexOfFirstDriver, indexOfLastDriver);
+
+  return (
+    <div className="row">
+      <div className="col-md-12">
+        <h1>Daftar Drive</h1>
+        <table className="table table-bordered">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Nama Warga</th>
+              <th>Judul Pengaduan</th>
+              <th>Alasan Ditolak</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentDrives.map((driver, index) => {
+              let statusClass = "";
+              switch (driver.status) {
+                case "Pending":
+                  return null;
+                case "Diproses":
+                  statusClass = "status-diterima";
+                  break;
+                case "Ditolak":
+                  statusClass = "status-ditolak";
+                  break;
+                case "Selesai":
+                  statusClass = "status-selesai";
+                  break;
+                default:
+                  break;
+              }
+              return (
+                <tr key={driver._id}>
+                  <td>{index + indexOfFirstDriver + 1}</td>
+                  <td>{driver.namaLengkap}</td>
+                  <td>{driver.email}</td>
+                  <td>{driver.alamat}</td>
+                  <td className={statusClass}>{driver.status}</td>
+                  <td className="col-1">
+                    {driver.status !== "pending" && (
+                      <button className="terimakeluhan btn-success">
+                        Terima
+                      </button>
+                    )}
+                    {driver.status !== "pending" && (
+                      <button className="tolakkeluhan btn-danger">Tolak</button>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        <Pagination
+          currentPage={currentPage}
+          perPage={perPage}
+          totalDrivers={drivers.length}
           onPageChange={handlePageChange}
         />
       </div>
