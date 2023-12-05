@@ -1,12 +1,7 @@
 import axios from "axios";
-import React, { useEffect, useState, useRef } from "react";
-import { Tab, Col, Nav, Row } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
+import { Tab, Col, Nav, Row, Table } from "react-bootstrap";
 import Swal from "sweetalert2";
-import { Bar } from "react-chartjs-2";
-import { Chart, registerables } from "chart.js";
-import { LinearScale } from "chart.js";
-
-import "../index.css";
 
 function DriverAdmin() {
   const [showAdminContent, setShowAdminContent] = useState(false);
@@ -52,6 +47,9 @@ function DriverAdmin() {
                 <Tab.Pane eventKey="drivers">
                   <Drivers />
                 </Tab.Pane>
+                <Tab.Pane eventKey="datadrivers">
+                  <DataDrivers />
+                </Tab.Pane>
               </Tab.Content>
             </Col>
           </Row>
@@ -63,203 +61,45 @@ function DriverAdmin() {
 
 export default DriverAdmin;
 
-export function Keluhans() {
-  const [keluhans, setkeluhans] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = await (
-          await axios.get("/api/keluhans/getallkeluhans")
-        ).data;
-        setkeluhans(data);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-  }, []);
-
-  async function terimaKeluhan(keluhanid) {
-    try {
-      const result = await (
-        await axios.post("/api/keluhans/terimakeluhan", {
-          keluhanid,
-        })
-      ).data;
-      console.log(result);
-      Swal.fire("Okay", "Keluhan Diterima", "success").then((result) => {
-        window.location.reload();
-      });
-    } catch (error) {
-      console.log(error);
-      Swal.fire("Oops", "Something went wrong", "error");
-    }
-  }
-
-  async function tolakKeluhan(keluhanid) {
-    try {
-      const result = await Swal.fire({
-        title: "Alasan Penolakan",
-        input: "textarea",
-        inputPlaceholder: "Masukkan alasan penolakan",
-        showCancelButton: true,
-        confirmButtonText: "Tolak",
-        cancelButtonText: "Batal",
-        showLoaderOnConfirm: true,
-        preConfirm: (alasan) => {
-          return axios
-            .post("/api/keluhans/tolakkeluhan", {
-              keluhanid,
-              alasanPenolakan: alasan,
-            })
-            .then((response) => {
-              if (response.data === "Keluhan ditolak") {
-                Swal.fire(
-                  "Okay",
-                  "Keluhan Ditolak dengan alasan : \n " + alasan,
-                  "success"
-                ).then((result) => {
-                  window.location.reload();
-                });
-              } else {
-                Swal.fire("Oops", "Something went wrong", "error");
-              }
-            })
-            .catch((error) => {
-              Swal.fire("Oops", "Something went wrong", "error");
-            });
-        },
-        allowOutsideClick: () => !Swal.isLoading(),
-      });
-
-      if (result.isDismissed) {
-        return;
-      }
-    } catch (error) {
-      console.log(error);
-      Swal.fire("Oops", "Something went wrong", "error");
-    }
-  }
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const filteredKeluhans = keluhans.filter(
-    (keluhan) => keluhan.status === "Pending"
-  );
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredKeluhans.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+export function DataDrivers() {
+  const drivers = JSON.parse(localStorage.getItem("drivers"));
 
   return (
-    <div className="row">
-      <div className="col-md-12">
-        <h1>Laporan Masuk</h1>
-
-        <table className="table table-bordered ">
-          <thead className="">
-            <tr>
-              <th>No</th>
-              <th>Nama</th>
-              <th>Kategori</th>
-              <th>Judul Pengaduan</th>
-              <th>Isi Pengaduan</th>
-              <th>Tanggal</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {currentItems.length > 0 ? (
-              currentItems.map((keluhan, index) => (
-                <tr key={keluhan._id}>
-                  <td>{index + indexOfFirstItem + 1}</td>
-                  <td>{keluhan.namawarga}</td>
-                  <td className="col-2">{keluhan.kategori}</td>
-                  <td>{keluhan.judulpengaduan}</td>
-                  <td>{keluhan.isipengaduan}</td>
-                  <td>
-                    {new Date(keluhan.createdAt).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "2-digit",
-                      year: "numeric",
-                    })}
-                  </td>
-
-                  <td className="col-1">
-                    {keluhan.status !== "pending" && (
-                      <button
-                        className="terimakeluhan btn-success"
-                        onClick={() => terimaKeluhan(keluhan._id)}
-                      >
-                        Terima
-                      </button>
-                    )}
-                    {keluhan.status !== "pending" && (
-                      <button
-                        className="tolakkeluhan btn-danger"
-                        onClick={() => tolakKeluhan(keluhan._id)}
-                      >
-                        Tolak
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))
-            ) : (
+    <div className="container">
+      <h1>Data Driver</h1>
+      <Table responsive>
+        <thead>
+          <tr>
+            <th>Nama Lengkap</th>
+            <th>NIM / KTP</th>
+            <th>Email</th>
+            <th>No Telepon</th>
+            <th>Alamat</th>
+          </tr>
+        </thead>
+        <tbody>
+          {drivers ? (
+            <>
               <tr>
-                <td colSpan="7">Tidak ada keluhan yang tersedia.</td>
+                <td>{drivers.namaLengkap}</td>
+                <td>
+                  {drivers.noNIM} / {drivers.noKTP}
+                </td>
+                <td>{drivers.email}</td>
+                <td>{drivers.noTelepon}</td>
+                <td>{drivers.alamat}</td>
               </tr>
-            )}
-          </tbody>
-        </table>
-
-        <Pagination
-          currentPage={currentPage}
-          itemsPerPage={itemsPerPage}
-          totalItems={filteredKeluhans.length}
-          onPageChange={handlePageChange}
-        />
-      </div>
+            </>
+          ) : (
+            <>
+              <h1>tidak ada data</h1>
+            </>
+          )}
+        </tbody>
+      </Table>
     </div>
   );
-
-  function Pagination({ currentPage, itemsPerPage, totalItems, onPageChange }) {
-    const pageNumbers = Math.ceil(totalItems / itemsPerPage);
-
-    return (
-      <nav>
-        <ul className="pagination">
-          {Array.from({ length: pageNumbers }, (_, i) => i + 1).map(
-            (pageNumber) => (
-              <li
-                key={pageNumber}
-                className={`page-item${
-                  currentPage === pageNumber ? " active" : ""
-                }`}
-              >
-                <button
-                  className="page-link"
-                  onClick={() => onPageChange(pageNumber)}
-                >
-                  {pageNumber}
-                </button>
-              </li>
-            )
-          )}
-        </ul>
-      </nav>
-    );
-  }
 }
-
 export function Drivers() {
   const [drivers, setdrivers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -307,70 +147,68 @@ export function Drivers() {
   // }
 
   return (
-    <div className="row">
-      <div className="col-md-12">
-        <h1>Daftar Driver</h1>
-        <table className="table table-bordered">
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Nama Lengkap</th>
-              <th>NIM / KTP</th>
-              <th>Email</th>
-              <th>No Telepon</th>
-              <th>Alamat</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentKeluhans.map((drivers, index) => {
-              let statusClass = "";
-              switch (drivers.status) {
-                case "Pending":
-                  return null;
-                case "Diproses":
-                  statusClass = "status-diterima";
-                  break;
-                case "Ditolak":
-                  statusClass = "status-ditolak";
-                  break;
-                case "Selesai":
-                  statusClass = "status-selesai";
-                  break;
-                default:
-                  break;
-              }
-              return (
-                <tr key={drivers._id}>
-                  <td>{index + indexOfFirstKeluhan + 1}</td>
-                  <td>{drivers.namaLengkap}</td>
-                  <td>
-                    {drivers.noNIM} / {drivers.noKTP}
-                  </td>
-                  <td>{drivers.email}</td>
-                  <td>{drivers.noTelepon}</td>
-                  <td>{drivers.alamat}</td>
+    <div className="container">
+      <h1>Daftar Driver</h1>
+      <Table responsive>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama Lengkap</th>
+            <th>NIM / KTP</th>
+            <th>Email</th>
+            <th>No Telepon</th>
+            <th>Alamat</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentKeluhans.map((drivers, index) => {
+            let statusClass = "";
+            switch (drivers.status) {
+              case "Pending":
+                return null;
+              case "Diproses":
+                statusClass = "status-diterima";
+                break;
+              case "Ditolak":
+                statusClass = "status-ditolak";
+                break;
+              case "Selesai":
+                statusClass = "status-selesai";
+                break;
+              default:
+                break;
+            }
+            return (
+              <tr key={drivers._id}>
+                <td>{index + indexOfFirstKeluhan + 1}</td>
+                <td>{drivers.namaLengkap}</td>
+                <td>
+                  {drivers.noNIM} / {drivers.noKTP}
+                </td>
+                <td>{drivers.email}</td>
+                <td>{drivers.noTelepon}</td>
+                <td>{drivers.alamat}</td>
 
-                  <td className="col-1">
-                    <button
-                      className="terimakeluhan btn-success"
-                      // onClick={() => selesaiKeluhan(keluhan._id)}
-                    >
-                      Selesai
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        <Pagination
-          currentPage={currentPage}
-          perPage={perPage}
-          totalKeluhans={drivers.length}
-          onPageChange={handlePageChange}
-        />
-      </div>
+                <td className="col-1">
+                  <button
+                    className="terimakeluhan btn-success"
+                    // onClick={() => selesaiKeluhan(keluhan._id)}
+                  >
+                    Selesai
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </Table>
+      <Pagination
+        currentPage={currentPage}
+        perPage={perPage}
+        totalKeluhans={drivers.length}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 

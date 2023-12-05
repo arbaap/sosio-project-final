@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Tab, Col, Nav, Row } from "react-bootstrap";
+import { Tab, Col, Nav, Row, Table } from "react-bootstrap";
 import Swal from "sweetalert2";
 import { Bar } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
@@ -143,7 +143,7 @@ export function Dashboard() {
 
     datasets: [
       {
-        label: "Total Keluhan",
+        label: "Total Pelanggan",
         type: "bar",
         data: [totalKeluhan],
         backgroundColor: "#02a0fc",
@@ -277,7 +277,7 @@ export function Pengaduans() {
     <div className="row">
       <div className="col-md-12">
         <h1>Semua Laporan</h1>
-        <table className="table table-bordered">
+        <Table responsive>
           <thead>
             <tr>
               <th>No</th>
@@ -328,7 +328,7 @@ export function Pengaduans() {
               );
             })}
           </tbody>
-        </table>
+        </Table>
         <Pagination
           currentPage={currentPage}
           perPage={perPage}
@@ -468,7 +468,7 @@ export function Keluhans() {
       <div className="col-md-12">
         <h1>Laporan Masuk</h1>
 
-        <table className="table table-bordered ">
+        <Table responsive>
           <thead className="">
             <tr>
               <th>No</th>
@@ -524,7 +524,7 @@ export function Keluhans() {
               </tr>
             )}
           </tbody>
-        </table>
+        </Table>
 
         <Pagination
           currentPage={currentPage}
@@ -681,7 +681,7 @@ export function Drivers() {
     <div className="row">
       <div className="col-md-12">
         <h1>Daftar Driver</h1>
-        <table className="table table-bordered">
+        <Table responsive>
           <thead>
             <tr>
               <th>No</th>
@@ -727,7 +727,7 @@ export function Drivers() {
               );
             })}
           </tbody>
-        </table>
+        </Table>
         <Pagination
           currentPage={currentPage}
           perPage={perPage}
@@ -797,7 +797,7 @@ export function Driver() {
     <div className="row">
       <div className="col-md-12">
         <h1>Daftar Drive</h1>
-        <table className="table table-bordered">
+        <Table responsive>
           <thead>
             <tr>
               <th>No</th>
@@ -847,7 +847,7 @@ export function Driver() {
               );
             })}
           </tbody>
-        </table>
+        </Table>
         <Pagination
           currentPage={currentPage}
           perPage={perPage}

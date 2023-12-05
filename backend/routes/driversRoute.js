@@ -38,6 +38,15 @@ router.get("/getalldrivers", async (req, res) => {
   }
 });
 
+router.get("/getdriversbyid/:id", async (req, res) => {
+  try {
+    const drivers = await Driver.findById(req.params.id);
+    res.json(drivers);
+  } catch (error) {
+    res.status(404).json({ message: err });
+  }
+});
+
 router.post("/logindriv", async (req, res) => {
   const { username, password } = req.body;
 
