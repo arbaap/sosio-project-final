@@ -4,6 +4,8 @@ import { IoArrowBackOutline } from "react-icons/io5";
 import Swal from "sweetalert2";
 import { Link } from "react-router-dom";
 
+import "../index.css";
+
 function TambahKeluhan() {
   const [namawarga, setnamawarga] = useState();
   const [kategori, setkategori] = useState("");

@@ -3,42 +3,24 @@ import React, { useEffect, useState } from "react";
 import { Tab, Tabs } from "react-bootstrap";
 import ModalKeluhan from "./ModalKeluhan";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import scooter from "../assets/img/core-img/scooter1.svg";
 
 function TampilanHome() {
   return (
-    <div className="inic container">
-      <h1 className="judul">Selamat Datang</h1>
-      <h2 className="judul2">
-        Di Sistem Informasi Pengaduan <br></br>Masyarakat Desa Kosar
-      </h2>
+    <div className="container">
+      <h1 className="judul text-center">
+        Selamat Datang di Sistem Layanan Antar Jemput ( UINJEK )
+      </h1>
 
       <div className="tampilanhome">
-        <h2 className="text-center">
-          <b>Daftar Pengaduan</b>
-        </h2>
-        <Tabs
-          defaultActiveKey="keluhanterbaru"
-          id="justify-tab-example"
-          className="mb-3"
-          justify
-        >
-          <Tab eventKey="keluhanterbaru" title="Terbaru">
-            <Terbaru />
-          </Tab>
-          <Tab eventKey="keluhandiproses" title="Diproses">
-            <DiProses />
-          </Tab>
-          <Tab eventKey="keluhanselesai" title="Selesai">
-            <Selesai />
-          </Tab>
-          <Tab eventKey="keluhanditolak" title="Ditolak">
-            <DiTolak />
-          </Tab>
-        </Tabs>
-        <div className="fixed-bottom w-50 m-auto">
-          <Link to="/tambahkeluhan" className="btn pengaduan btn-block">
-            Buat Pengaduan
-          </Link>
+        <HomeJek />
+        <div className="row justify-content-center  fixed-bottom w-100 m-auto flex-nowrap">
+          <div className="col-md-3 ">
+            <Link to="" className="btn pengaduan btn-block">
+              Home
+            </Link>
+          </div>
         </div>
       </div>
     </div>
@@ -47,401 +29,32 @@ function TampilanHome() {
 
 export default TampilanHome;
 
-export function Terbaru() {
-  const [keluhans, setkeluhans] = useState([]);
+export function HomeJek() {
+  const redirectToWhatsApp = () => {
+    const whatsappNumber = "6281223991511";
+    const whatsappLink = `https://wa.me/${whatsappNumber}`;
 
-  const [duplicatekeluhans, setduplicatekeluhans] = useState([]);
-  const [searchkey, setsearchkey] = useState();
-  const [kategori, setkategori] = useState("all");
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = (await axios.get("/api/keluhans/getallkeluhans")).data;
-
-        setkeluhans(data);
-        setduplicatekeluhans(data);
-      } catch (err) {
-        console.log("error");
-      }
-    })();
-  }, []);
-
-  function filterBySearch() {
-    const tempkeluhans = duplicatekeluhans.filter((keluhan) =>
-      keluhan.namawarga.toLowerCase().includes(searchkey.toLowerCase())
-    );
-
-    setkeluhans(tempkeluhans);
-  }
-
-  function filterByType(e) {
-    setkategori(e);
-
-    if (e !== "all") {
-      const tempkeluhans = duplicatekeluhans.filter(
-        (keluhan) => keluhan.kategori.toLowerCase() === e.toLowerCase()
-      );
-      setkeluhans(tempkeluhans);
-    } else {
-      setkeluhans(duplicatekeluhans);
-    }
-  }
-  const sortedKeluhans = keluhans.sort((a, b) => b.vote - a.vote);
+    window.open(whatsappLink, "_blank");
+  };
 
   return (
     <div className="row justify-content-center">
-      <div className="row">
-        <div className="col-sm mb-4">
-          {" "}
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Cari"
-            value={searchkey}
-            onChange={(e) => {
-              setsearchkey(e.target.value);
-            }}
-            onKeyUp={filterBySearch}
-          />
-        </div>
-        <div className="col-sm">
-          {" "}
-          <select
-            className="form-control custom-select"
-            value={kategori}
-            onChange={(e) => {
-              filterByType(e.target.value);
-            }}
-          >
-            <option value="all">Pilih Kategori</option>
-            <option value="Infrastruktur">Infrastruktur</option>
-            <option value="Pelayanan Publik">Pelayan Publik</option>
-            <option value="Keamanan dan Ketertiban">
-              Keamanan dan Ketertiban
-            </option>
-            <option value="Kesehatan Masyarakat">Kesehatan Masyarakat</option>
-            <option value="Lingkungan">Lingkungan</option>
-          </select>
-        </div>
-      </div>
-      <div className="row justify-content-center">
-        {" "}
-        {sortedKeluhans.length > 0
-          ? sortedKeluhans.map((keluhan, index) => {
-              return (
-                <div className="modals col-md-9">
-                  <ModalKeluhan keluhan={keluhan} index={index} />
+      <div class="product-catagories-wrapper pt-3">
+        <div class="container">
+          <div class="section-heading">
+            <h6 class="ml-3">Layanan UINJEK</h6>
+          </div>
+          <div class="product-catagory-wrap">
+            <div class="container">
+              <div class="card mb-3 catagory-card">
+                <div class="card-body" onClick={redirectToWhatsApp}>
+                  <img className="img-scooter" src={scooter} alt="" />
+                  <h2 className="text-center">UINJEK</h2>
                 </div>
-              );
-            })
-          : console.log}
-      </div>
-    </div>
-  );
-}
-
-export function Selesai() {
-  const [keluhans, setkeluhans] = useState([]);
-
-  const [duplicatekeluhans, setduplicatekeluhans] = useState([]);
-  const [searchkey, setsearchkey] = useState();
-  const [kategori, setkategori] = useState("all");
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = (await axios.get("/api/keluhans/getallkeluhans")).data;
-
-        setkeluhans(data);
-        setduplicatekeluhans(data);
-      } catch (err) {
-        console.log("error");
-      }
-    })();
-  }, []);
-
-  function filterBySearch() {
-    const tempkeluhans = duplicatekeluhans.filter((keluhan) =>
-      keluhan.namawarga.toLowerCase().includes(searchkey.toLowerCase())
-    );
-
-    setkeluhans(tempkeluhans);
-  }
-
-  function filterByType(e) {
-    setkategori(e);
-
-    if (e !== "all") {
-      const tempkeluhans = duplicatekeluhans.filter(
-        (keluhan) => keluhan.kategori.toLowerCase() === e.toLowerCase()
-      );
-      setkeluhans(tempkeluhans);
-    } else {
-      setkeluhans(duplicatekeluhans);
-    }
-  }
-
-  const keluhansSelesai = keluhans.filter(
-    (keluhan) => keluhan.status === "Selesai"
-  );
-
-  const sortedKeluhans = keluhansSelesai.sort((a, b) => b.vote - a.vote);
-
-  return (
-    <div className="row justify-content-center">
-      <div className="row">
-        <div className="col-sm mb-4">
-          {" "}
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Cari"
-            value={searchkey}
-            onChange={(e) => {
-              setsearchkey(e.target.value);
-            }}
-            onKeyUp={filterBySearch}
-          />
-        </div>
-        <div className="col-sm">
-          {" "}
-          <select
-            className="form-control custom-select"
-            value={kategori}
-            onChange={(e) => {
-              filterByType(e.target.value);
-            }}
-          >
-            <option value="all">Pilih Kategori</option>
-            <option value="Infrastruktur">Infrastruktur</option>
-            <option value="Pelayanan Publik">Pelayan Publik</option>
-            <option value="Keamanan dan Ketertiban">
-              Keamanan dan Ketertiban
-            </option>
-            <option value="Kesehatan Masyarakat">Kesehatan Masyarakat</option>
-            <option value="Lingkungan">Lingkungan</option>
-          </select>
-        </div>
-      </div>
-      <div className="row justify-content-center">
-        {keluhansSelesai.length > 0
-          ? keluhansSelesai.map((keluhan, index) => {
-              return (
-                <div className="modals col-md-9">
-                  <ModalKeluhan keluhan={keluhan} index={index} />
-                </div>
-              );
-            })
-          : console.log}
-      </div>
-    </div>
-  );
-}
-
-export function DiProses() {
-  const [keluhans, setkeluhans] = useState([]);
-
-  const [duplicatekeluhans, setduplicatekeluhans] = useState([]);
-  const [searchkey, setsearchkey] = useState();
-  const [kategori, setkategori] = useState("all");
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = (await axios.get("/api/keluhans/getallkeluhans")).data;
-
-        setkeluhans(data);
-        setduplicatekeluhans(data);
-      } catch (err) {
-        console.log("error");
-      }
-    })();
-  }, []);
-
-  function filterBySearch() {
-    const tempkeluhans = duplicatekeluhans.filter((keluhan) =>
-      keluhan.namawarga.toLowerCase().includes(searchkey.toLowerCase())
-    );
-
-    setkeluhans(tempkeluhans);
-  }
-
-  function filterByType(e) {
-    setkategori(e);
-
-    if (e !== "all") {
-      const tempkeluhans = duplicatekeluhans.filter(
-        (keluhan) => keluhan.kategori.toLowerCase() === e.toLowerCase()
-      );
-      setkeluhans(tempkeluhans);
-    } else {
-      setkeluhans(duplicatekeluhans);
-    }
-  }
-
-  // const keluhansDiProses = keluhans
-  //   .filter((keluhan) => keluhan.status === "Diterima")
-  //   .map((keluhan) => ({
-  //     ...keluhan,
-  //     status: "Diproses",
-  //   }));
-
-  const keluhansDiProses = keluhans.filter(
-    (keluhan) => keluhan.status === "Diproses"
-  );
-
-  const sortedKeluhans = keluhansDiProses.sort((a, b) => b.vote - a.vote);
-
-  return (
-    <div className="row justify-content-center">
-      <div className="row">
-        <div className="col-sm mb-4">
-          {" "}
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Cari"
-            value={searchkey}
-            onChange={(e) => {
-              setsearchkey(e.target.value);
-            }}
-            onKeyUp={filterBySearch}
-          />
-        </div>
-        <div className="col-sm">
-          {" "}
-          <select
-            className="form-control custom-select"
-            value={kategori}
-            onChange={(e) => {
-              filterByType(e.target.value);
-            }}
-          >
-            <option value="all">Pilih Kategori</option>
-            <option value="Infrastruktur">Infrastruktur</option>
-            <option value="Pelayanan Publik">Pelayan Publik</option>
-            <option value="Keamanan dan Ketertiban">
-              Keamanan dan Ketertiban
-            </option>
-            <option value="Kesehatan Masyarakat">Kesehatan Masyarakat</option>
-            <option value="Lingkungan">Lingkungan</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="row justify-content-center">
-        {" "}
-        {keluhansDiProses.length > 0 ? (
-          keluhansDiProses.map((keluhan, index) => (
-            <div className="col-md-9">
-              <ModalKeluhan keluhan={keluhan} index={index} />
-            </div>
-          ))
-        ) : (
-          <p>Tidak ada keluhan yang sedang diproses.</p>
-        )}
-      </div>
-    </div>
-  );
-}
-
-export function DiTolak() {
-  const [keluhans, setkeluhans] = useState([]);
-
-  const [duplicatekeluhans, setduplicatekeluhans] = useState([]);
-  const [searchkey, setsearchkey] = useState();
-  const [kategori, setkategori] = useState("all");
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = (await axios.get("/api/keluhans/getallkeluhans")).data;
-
-        setkeluhans(data);
-        setduplicatekeluhans(data);
-      } catch (err) {
-        console.log("error");
-      }
-    })();
-  }, []);
-
-  function filterBySearch() {
-    const tempkeluhans = duplicatekeluhans.filter((keluhan) =>
-      keluhan.namawarga.toLowerCase().includes(searchkey.toLowerCase())
-    );
-
-    setkeluhans(tempkeluhans);
-  }
-
-  function filterByType(e) {
-    setkategori(e);
-
-    if (e !== "all") {
-      const tempkeluhans = duplicatekeluhans.filter(
-        (keluhan) => keluhan.kategori.toLowerCase() === e.toLowerCase()
-      );
-      setkeluhans(tempkeluhans);
-    } else {
-      setkeluhans(duplicatekeluhans);
-    }
-  }
-
-  const keluhansDitolak = keluhans.filter(
-    (keluhan) => keluhan.status === "Ditolak"
-  );
-
-  const sortedKeluhans = keluhansDitolak.sort((a, b) => b.vote - a.vote);
-
-  return (
-    <div className="row justify-content-center">
-      <div className="row">
-        <div className="col-sm mb-4">
-          {" "}
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Cari"
-            value={searchkey}
-            onChange={(e) => {
-              setsearchkey(e.target.value);
-            }}
-            onKeyUp={filterBySearch}
-          />
-        </div>
-        <div className="col-sm">
-          {" "}
-          <select
-            className="form-control custom-select"
-            value={kategori}
-            onChange={(e) => {
-              filterByType(e.target.value);
-            }}
-          >
-            <option value="all">Pilih Kategori</option>
-            <option value="Infrastruktur">Infrastruktur</option>
-            <option value="Pelayanan Publik">Pelayan Publik</option>
-            <option value="Keamanan dan Ketertiban">
-              Keamanan dan Ketertiban
-            </option>
-            <option value="Kesehatan Masyarakat">Kesehatan Masyarakat</option>
-            <option value="Lingkungan">Lingkungan</option>
-          </select>
-        </div>
-      </div>
-      <div className="row justify-content-center">
-        {" "}
-        {keluhansDitolak.length > 0 ? (
-          keluhansDitolak.map((keluhan, index) => {
-            return (
-              <div className="col-md-9">
-                <ModalKeluhan keluhan={keluhan} index={index} />
               </div>
-            );
-          })
-        ) : (
-          <p>Tidak ada keluhan yang ditolak.</p>
-        )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

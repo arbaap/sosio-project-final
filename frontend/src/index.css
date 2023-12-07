@@ -111,13 +111,6 @@ h1 {
   background-color: #696969;
 }
 
-.navbar,
-.alasanpenolakan,
-.pengaduan,
-.tambahkeluhan {
-  background-image: url("./assets/background.png");
-}
-
 .img-logo {
   width: 50px;
 }
@@ -400,74 +393,14 @@ b {
   }
 }
 
-/* @media only screen and (min-width: 601px) and (max-width: 1024px) {
-  .judul {
-    font-size: 32px;
-    margin-top: 30px;
-  }
-
-  .judul2 {
-    font-size: 18px;
-  }
-
-  .form-control {
-    font-size: 14px;
-  }
-
-  .labelform {
-    font-size: 14px;
-  }
-
-  .tampilanhome,
-  .tampilanadmin,
-  .pengaduan,
-  .tambahkeluhan {
-    margin-top: 15px;
-    padding: 15px;
-  }
-
-  .pengaduan,
-  .tambahkeluhan {
-    font-size: 16px;
-  }
-
-  .jdltambahkeluhan {
-    font-size: 22px;
-  }
+.img-scooter {
+  max-width: 20%;
+  height: 20%;
+  display: block;
+  margin: 0 auto;
 }
 
-@media only screen and (min-width: 1025px) {
-  .judul {
-    font-size: 48px;
-    margin-top: 40px;
-  }
-
-  .judul2 {
-    font-size: 24px;
-  }
-
-  .form-control {
-    font-size: 16px;
-  }
-
-  .labelform {
-    font-size: 16px;
-  }
-
-  .tampilanhome,
-  .tampilanadmin,
-  .pengaduan,
-  .tambahkeluhan {
-    margin-top: 20px;
-    padding: 20px;
-  }
-
-  .pengaduan,
-  .tambahkeluhan {
-    font-size: 18px;
-  }
-
-  .jdltambahkeluhan {
-    font-size: 28px;
-  }
-} */
+.text-danger {
+  font-size: 8px;
+  margin-left: 10px;
+}
