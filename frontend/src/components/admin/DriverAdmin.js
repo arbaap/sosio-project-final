@@ -1,13 +1,13 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Tab, Col, Nav, Row, Table, Container } from "react-bootstrap";
+import { Tab, Col, Nav, Row, Table, Container, Card } from "react-bootstrap";
 import Swal from "sweetalert2";
 
 function DriverAdmin() {
   const [showAdminContent, setShowAdminContent] = useState(false);
 
   useEffect(() => {
-    const drivers = JSON.parse(localStorage.getItem("drivers"));
+    const drivers = JSON.parse(sessionStorage.getItem("drivers"));
     if (!drivers || !drivers.isDriver) {
       Swal.fire({
         title: "Akses Ditolak",
@@ -15,7 +15,7 @@ function DriverAdmin() {
         icon: "warning",
         confirmButtonText: "OK",
       }).then(() => {
-        window.location.href = "/login";
+        window.location.href = "/loginadmin";
       });
 
       return;
@@ -50,6 +50,9 @@ function DriverAdmin() {
                 <Tab.Pane eventKey="datadrivers">
                   <DataDrivers />
                 </Tab.Pane>
+                <Tab.Pane eventKey="pelanggan">
+                  <Orders />
+                </Tab.Pane>
               </Tab.Content>
             </Col>
           </Row>
@@ -62,7 +65,7 @@ function DriverAdmin() {
 export default DriverAdmin;
 
 export function DataDrivers() {
-  const drivers = JSON.parse(localStorage.getItem("drivers"));
+  const drivers = JSON.parse(sessionStorage.getItem("drivers"));
 
   return (
     <Container>
@@ -243,4 +246,59 @@ export function Drivers() {
       </nav>
     );
   }
+}
+
+export function Orders() {
+  const [orders, setOrders] = useState([]);
+  const drivers = JSON.parse(sessionStorage.getItem("drivers"));
+  const driverId = drivers ? drivers._id : null;
+
+  useEffect(() => {
+    if (driverId) {
+      fetchOrders();
+    }
+  }, [driverId]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    try {
+      const response = await axios.get(
+        `/api/orders/ordersfordriver/${driverId}`
+      );
+      setOrders(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <Container>
+      <h2>
+        <b>Daftar Pesanan</b>
+      </h2>
+      <Table responsive>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama Pelanggan</th>
+            <th>Additional Info</th>
+            {/* Tambahkan field lainnya yang ingin ditampilkan */}
+          </tr>
+        </thead>
+        <tbody>
+          {orders.map((order, index) => (
+            <tr key={order._id}>
+              <td>{index + 1}</td>
+              <td>{order.pelangganName}</td>
+              <td>{order.additionalInfo}</td>
+              {/* Tambahkan field lainnya yang ingin ditampilkan */}
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </Container>
+  );
 }

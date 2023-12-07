@@ -1,4 +1,4 @@
-import { Container, Row } from "react-bootstrap";
+import { Card, Container, ListGroup, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import scooter from "../assets/img/core-img/scooter1.svg";
@@ -10,10 +10,10 @@ function TampilanHome() {
         Selamat Datang di Sistem Layanan Antar Jemput ( UINJEK )
       </h1>
 
-      <div className="tampilanhome">
+      <div className="tampilanhome mb-5">
         <HomeJek />
         <div className="row justify-content-center  fixed-bottom w-100 m-auto flex-nowrap">
-          <div className="col-md-3 ">
+          <div className="col-md-3">
             <Link to="" className="btn pengaduan btn-block">
               Home
             </Link>
@@ -43,12 +43,21 @@ export function HomeJek() {
           </div>
           <div class="product-catagory-wrap">
             <Container>
-              <div class="card mb-3 catagory-card">
+              {/* <div class="card mb-3 catagory-card">
                 <div class="card-body" onClick={redirectToWhatsApp}>
                   <img className="img-scooter" src={scooter} alt="" />
                   <h2 className="text-center">UINJEK</h2>
                 </div>
-              </div>
+              </div> */}
+
+              <Card className="mb-3 catagory-card">
+                <Card.Body>
+                  <Link to="/listdriver">
+                    <img className="img-scooter" src={scooter} alt="" />
+                  </Link>
+                  <p className="text-center">Lihat Daftar Driver</p>
+                </Card.Body>
+              </Card>
             </Container>
           </div>
         </Container>

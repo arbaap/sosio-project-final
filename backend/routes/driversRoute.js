@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const Driver = require("../models/driver");
+const Order = require("../models/order");
 
 router.post("/registermitra", async (req, res) => {
   const newDriver = new Driver({
@@ -96,5 +97,17 @@ router.post("/tolakdriver", async (req, res) => {
     return res.status(400).json({ error });
   }
 });
+
+router.get("/getordersfordriver/:driverId", async (req, res) => {
+  const driverId = req.params.driverId;
+  try {
+    const orders = await Order.find({ driverId });
+    res.json(orders);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch orders for driver" });
+  }
+});
+
+module.exports = router;
 
 module.exports = router;

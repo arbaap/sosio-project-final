@@ -6,10 +6,11 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import logo from "../../assets/img/gmaps/driver.png";
 import Swal from "sweetalert2";
 
-const NavbarPage = () => {
-  const pengguna = JSON.parse(localStorage.getItem("pengguna"));
+const NavbarAdmin = () => {
+  const pengguna = JSON.parse(sessionStorage.getItem("pengguna"));
 
-  function logout() {
+  function logout(event) {
+    event.preventDefault();
     Swal.fire({
       title: "Logout",
       text: "Apakah Anda yakin ingin keluar?",
@@ -21,7 +22,7 @@ const NavbarPage = () => {
       cancelButtonText: "Tidak",
     }).then((result) => {
       if (result.isConfirmed) {
-        localStorage.removeItem("pengguna");
+        sessionStorage.removeItem("pengguna");
         Swal.fire("Okay", "Logout Berhasil", "success").then(() => {
           window.location.href = "/logindriver";
         });
@@ -44,7 +45,10 @@ const NavbarPage = () => {
                   title={<span style={{ color: "white" }}>Admin</span>}
                   id="basic-nav-dropdown"
                 >
-                  <NavDropdown.Item href="/login" onClick={logout}>
+                  <NavDropdown.Item
+                    href="/login"
+                    onClick={(event) => logout(event)}
+                  >
                     Logout
                   </NavDropdown.Item>
                 </NavDropdown>
@@ -63,4 +67,4 @@ const NavbarPage = () => {
   );
 };
 
-export default NavbarPage;
+export default NavbarAdmin;

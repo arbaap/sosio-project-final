@@ -3,7 +3,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
 
-function TampilanRegisterMitra() {
+function RegisterPelanggan() {
   const [username, setUsername] = useState("");
   const [namaLengkap, setNamaLengkap] = useState("");
   const [noNIM, setNoNim] = useState("");
@@ -101,10 +101,13 @@ function TampilanRegisterMitra() {
     };
 
     try {
-      const result = await axios.post("/api/drivers/registermitra", driver);
+      const result = await axios.post(
+        "/api/pelanggans/registerpelanggan",
+        driver
+      );
       console.log(result);
       Swal.fire("Selamat", "Registrasi Berhasil", "success").then((result) => {
-        window.location.href = "/logindriver";
+        window.location.href = "/loginpelanggan";
       });
     } catch (error) {
       Swal.fire("Oops", "Terjadi kesalahan", "error");
@@ -200,7 +203,7 @@ function TampilanRegisterMitra() {
         <Row className="justify-content-md-center">
           <Col>
             <div className="bs">
-              <h2 className="text-center">Daftar UINJEK</h2>
+              <h2 className="text-center">Daftar Pelanggan</h2>
               <Form>
                 <Form.Group controlId="formUsername">
                   <Form.Control
@@ -467,4 +470,4 @@ function TampilanRegisterMitra() {
   );
 }
 
-export default TampilanRegisterMitra;
+export default RegisterPelanggan;

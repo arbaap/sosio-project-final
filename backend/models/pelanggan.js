@@ -56,6 +56,6 @@ const pelangganSchema = mongoose.Schema(
   }
 );
 
-const PelangganModel = mongoose.model("driver", pelangganSchema);
+const PelangganModel = mongoose.model("pelanggan", pelangganSchema);
 
 module.exports = PelangganModel;
