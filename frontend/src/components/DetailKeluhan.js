@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
-import { Card, Button, Modal, Container, Col, Row } from "react-bootstrap";
+import {  Button, Modal, Container, Col, Row } from "react-bootstrap";
 import { IoArrowBackOutline } from "react-icons/io5";
 
 function DetailKeluhan({ match }) {

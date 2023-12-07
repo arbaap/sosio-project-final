@@ -1,14 +1,11 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { Tab, Tabs } from "react-bootstrap";
-import ModalKeluhan from "./ModalKeluhan";
+import { Container, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import scooter from "../assets/img/core-img/scooter1.svg";
 
 function TampilanHome() {
   return (
-    <div className="container">
+    <Container>
       <h1 className="judul text-center">
         Selamat Datang di Sistem Layanan Antar Jemput ( UINJEK )
       </h1>
@@ -23,7 +20,7 @@ function TampilanHome() {
           </div>
         </div>
       </div>
-    </div>
+    </Container>
   );
 }
 
@@ -38,24 +35,24 @@ export function HomeJek() {
   };
 
   return (
-    <div className="row justify-content-center">
+    <Row className="justify-content-md-center">
       <div class="product-catagories-wrapper pt-3">
-        <div class="container">
+        <Container>
           <div class="section-heading">
             <h6 class="ml-3">Layanan UINJEK</h6>
           </div>
           <div class="product-catagory-wrap">
-            <div class="container">
+            <Container>
               <div class="card mb-3 catagory-card">
                 <div class="card-body" onClick={redirectToWhatsApp}>
                   <img className="img-scooter" src={scooter} alt="" />
                   <h2 className="text-center">UINJEK</h2>
                 </div>
               </div>
-            </div>
+            </Container>
           </div>
-        </div>
+        </Container>
       </div>
-    </div>
+    </Row>
   );
 }

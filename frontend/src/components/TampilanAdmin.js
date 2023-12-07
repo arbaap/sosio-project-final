@@ -196,7 +196,9 @@ export function Dashboard() {
 
   return (
     <div className="dashboard-container">
-      <h1>Dashboard</h1>
+      <h2>
+        <b>Dashboard</b>
+      </h2>
       <div className="laporanmasuk dashboard-box">
         <p> Masuk</p>
         <p className="angkas">{totalKeluhan}</p>
@@ -218,7 +220,9 @@ export function Dashboard() {
         <p className="angkas">{totalKeluhanPending}</p>
       </div>
       <div className="chart-container justify-content-center">
-        <h1>Statistik Laporan</h1>
+        <h2>
+          <b>Statistik Laporan</b>
+        </h2>
         <div>
           <Bar data={chartData} options={options} />
         </div>
@@ -274,9 +278,11 @@ export function Pengaduans() {
   }
 
   return (
-    <div className="row">
-      <div className="col-md-12">
-        <h1>Semua Laporan</h1>
+    <Row>
+      <Col>
+        <h2>
+          <b>Semua Laporan</b>
+        </h2>
         <Table responsive>
           <thead>
             <tr>
@@ -335,8 +341,8 @@ export function Pengaduans() {
           totalKeluhans={keluhans.length}
           onPageChange={handlePageChange}
         />
-      </div>
-    </div>
+      </Col>
+    </Row>
   );
 
   function Pagination({ currentPage, perPage, totalKeluhans, onPageChange }) {
@@ -464,9 +470,11 @@ export function Keluhans() {
   );
 
   return (
-    <div className="row">
-      <div className="col-md-12">
-        <h1>Laporan Masuk</h1>
+    <Row>
+      <Col>
+        <h2>
+          <b>Laporan Masuk</b>
+        </h2>
 
         <Table responsive>
           <thead className="">
@@ -532,8 +540,8 @@ export function Keluhans() {
           totalItems={filteredKeluhans.length}
           onPageChange={handlePageChange}
         />
-      </div>
-    </div>
+      </Col>
+    </Row>
   );
 
   function Pagination({ currentPage, itemsPerPage, totalItems, onPageChange }) {
@@ -678,9 +686,11 @@ export function Drivers() {
   };
 
   return (
-    <div className="row">
-      <div className="col-md-12">
-        <h1>Daftar Driver</h1>
+    <Row>
+      <Col>
+        <h2>
+          <b>Daftar Driver</b>
+        </h2>
         <Table responsive>
           <thead>
             <tr>
@@ -734,8 +744,8 @@ export function Drivers() {
           totalKeluhans={drivers.length}
           onPageChange={handlePageChange}
         />
-      </div>
-    </div>
+      </Col>
+    </Row>
   );
 
   function Pagination({ currentPage, perPage, totalDrivers, onPageChange }) {
@@ -794,9 +804,11 @@ export function Driver() {
   const currentDrives = drivers.slice(indexOfFirstDriver, indexOfLastDriver);
 
   return (
-    <div className="row">
-      <div className="col-md-12">
-        <h1>Daftar Drive</h1>
+    <Row>
+      <Col>
+        <h2>
+          <b>Daftar Driver</b>
+        </h2>
         <Table responsive>
           <thead>
             <tr>
@@ -854,8 +866,8 @@ export function Driver() {
           totalDrivers={drivers.length}
           onPageChange={handlePageChange}
         />
-      </div>
-    </div>
+      </Col>
+    </Row>
   );
 
   function Pagination({ currentPage, perPage, totalDrivers, onPageChange }) {
