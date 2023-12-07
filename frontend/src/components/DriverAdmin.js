@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Tab, Col, Nav, Row, Table } from "react-bootstrap";
+import { Tab, Col, Nav, Row, Table, Container } from "react-bootstrap";
 import Swal from "sweetalert2";
 
 function DriverAdmin() {
@@ -65,8 +65,10 @@ export function DataDrivers() {
   const drivers = JSON.parse(localStorage.getItem("drivers"));
 
   return (
-    <div className="container">
-      <h1>Data Driver</h1>
+    <Container>
+      <h2>
+        <b>Data Driver</b>
+      </h2>
       <Table responsive>
         <thead>
           <tr>
@@ -97,7 +99,7 @@ export function DataDrivers() {
           )}
         </tbody>
       </Table>
-    </div>
+    </Container>
   );
 }
 export function Drivers() {
@@ -147,8 +149,10 @@ export function Drivers() {
   // }
 
   return (
-    <div className="container">
-      <h1>Daftar Driver</h1>
+    <Container>
+      <h2>
+        <b>Daftar Driver</b>
+      </h2>
       <Table responsive>
         <thead>
           <tr>
@@ -209,7 +213,7 @@ export function Drivers() {
         totalKeluhans={drivers.length}
         onPageChange={handlePageChange}
       />
-    </div>
+    </Container>
   );
 
   function Pagination({ currentPage, perPage, totalDrivers, onPageChange }) {

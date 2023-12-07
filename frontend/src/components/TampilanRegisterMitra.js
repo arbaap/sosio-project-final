@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { Form, Button } from "react-bootstrap";
+import { Form, Button, Container, Row, Col } from "react-bootstrap";
 
 function TampilanRegisterMitra() {
   const [username, setUsername] = useState("");
@@ -195,10 +195,10 @@ function TampilanRegisterMitra() {
   };
 
   return (
-    <div className="inic container">
+    <Container>
       <div className="tampilanhome">
-        <div className="row justify-content-center">
-          <div className="col-md-5 mt-5">
+        <Row className="justify-content-md-center">
+          <Col>
             <div className="bs">
               <h2 className="text-center">Daftar UINJEK</h2>
               <Form>
@@ -460,10 +460,10 @@ function TampilanRegisterMitra() {
                 Daftar
               </Button>
             </div>
-          </div>
-        </div>
+          </Col>
+        </Row>
       </div>
-    </div>
+    </Container>
   );
 }
 
