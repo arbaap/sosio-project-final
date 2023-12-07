@@ -2,11 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 
 import Card from "react-bootstrap/Card";
-import logo from "../assets/subang.png";
+import logo from "../../assets/logo.png";
 import Swal from "sweetalert2";
 
-
-function TampilanLogin() {
+function LoginAdmin() {
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
 
@@ -21,7 +20,7 @@ function TampilanLogin() {
       Swal.fire("Okay", "Login Berhasil", "success").then((result) => {
         window.location.href = "/admin";
       });
-      localStorage.setItem("pengguna", JSON.stringify(result));
+      sessionStorage.setItem("pengguna", JSON.stringify(result));
     } catch (error) {
       Swal.fire("oops", "something went wrong", "error");
     }
@@ -70,4 +69,4 @@ function TampilanLogin() {
   );
 }
 
-export default TampilanLogin;
+export default LoginAdmin;

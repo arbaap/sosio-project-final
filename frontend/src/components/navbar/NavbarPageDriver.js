@@ -7,9 +7,11 @@ import logo from "../../assets/img/gmaps/driver.png";
 import Swal from "sweetalert2";
 
 const NavbarPageDriver = () => {
-  const drivers = JSON.parse(localStorage.getItem("drivers"));
+  const drivers = JSON.parse(sessionStorage.getItem("drivers"));
 
-  function logout() {
+  function logout(event) {
+    event.preventDefault();
+
     Swal.fire({
       title: "Logout",
       text: "Apakah Anda yakin ingin keluar?",
@@ -21,7 +23,7 @@ const NavbarPageDriver = () => {
       cancelButtonText: "Tidak",
     }).then((result) => {
       if (result.isConfirmed) {
-        localStorage.removeItem("drivers");
+        sessionStorage.removeItem("drivers");
         Swal.fire("Okay", "Logout Berhasil", "success").then(() => {
           window.location.href = "/logindriver";
         });
@@ -46,9 +48,13 @@ const NavbarPageDriver = () => {
                   }
                   id="basic-nav-dropdown"
                 >
-                  <NavDropdown.Item href="/logindriver" onClick={logout}>
+                  <NavDropdown.Item
+                    href="/home"
+                    onClick={(event) => logout(event)}
+                  >
                     Logout
                   </NavDropdown.Item>
+                  ;
                 </NavDropdown>
               </>
             ) : (

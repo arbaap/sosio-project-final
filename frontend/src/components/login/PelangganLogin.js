@@ -2,25 +2,27 @@ import React, { useState } from "react";
 import axios from "axios";
 
 import Card from "react-bootstrap/Card";
-import logo from "../assets/subang.png";
+import logo from "../../assets/logo.png";
 import Swal from "sweetalert2";
-
-function DriverLogin() {
+import { Button } from "react-bootstrap";
+function PelangganLogin() {
   const [username, setusername] = useState("");
   const [password, setpassword] = useState("");
 
   async function Login() {
-    const drivers = {
+    const pelanggans = {
       username,
       password,
     };
-    console.log(drivers);
+    console.log(pelanggans);
     try {
-      const result = (await axios.post("/api/drivers/logindriv", drivers)).data;
+      const result = (
+        await axios.post("/api/pelanggans/loginpelanggan", pelanggans)
+      ).data;
       Swal.fire("Okay", "Login Berhasil", "success").then((result) => {
-        window.location.href = "/admindriver";
+        window.location.href = "/home";
       });
-      localStorage.setItem("drivers", JSON.stringify(result));
+      sessionStorage.setItem("pelanggans", JSON.stringify(result));
     } catch (error) {
       Swal.fire("oops", "something went wrong", "error");
     }
@@ -34,7 +36,7 @@ function DriverLogin() {
             <Card.Body>
               <Card.Title className="text-center">
                 <img className="img-logo" src={logo} alt="" />
-                <h2>Selamat datang di</h2>
+                <h2>Customer</h2>
                 <h1>UINJEK</h1>
               </Card.Title>
               <Card.Text>
@@ -57,9 +59,15 @@ function DriverLogin() {
                     setpassword(e.target.value);
                   }}
                 />
-                <button className="btnlogin btn btn-block" onClick={Login}>
+                <Button className="btnlogin btn btn-block" onClick={Login}>
                   Masuk
-                </button>
+                </Button>
+                <p className="mt-3 text-center" style={{ fontSize: 8 }}>
+                  Login Sebagai Driver?{" "}
+                  <a href="/logindriver" className="register-link">
+                    Login
+                  </a>
+                </p>
               </Card.Text>
             </Card.Body>
           </Card>
@@ -69,4 +77,4 @@ function DriverLogin() {
   );
 }
 
-export default DriverLogin;
+export default PelangganLogin;

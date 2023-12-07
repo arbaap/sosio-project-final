@@ -6,13 +6,11 @@ import { Bar } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
 import { LinearScale } from "chart.js";
 
-import "../index.css";
-
 function Adminscreen() {
   const [showAdminContent, setShowAdminContent] = useState(false);
 
   useEffect(() => {
-    const pengguna = JSON.parse(localStorage.getItem("pengguna"));
+    const pengguna = JSON.parse(sessionStorage.getItem("pengguna"));
     if (!pengguna || !pengguna.isAdmin) {
       Swal.fire({
         title: "Akses Ditolak",
@@ -20,7 +18,7 @@ function Adminscreen() {
         icon: "warning",
         confirmButtonText: "OK",
       }).then(() => {
-        window.location.href = "/login";
+        window.location.href = "/loginadmin";
       });
 
       return;
