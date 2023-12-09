@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 mongoose.set("strictQuery", false);
 
 var mongoURL =
-  "mongodb+srv://kosarvillage:kosarvillage@cluster0.93sie2d.mongodb.net/testing";
+  "mongodb+srv://uinjek:uinjek@cluster0.93sie2d.mongodb.net/db-uinjek";
 
 mongoose.connect(mongoURL, { useUnifiedTopology: true, useNewUrlParser: true });
 

@@ -18,6 +18,7 @@ import RegisterPelanggan from "./components/register/RegisterPelangganScreen";
 import PelangganLogin from "./components/login/PelangganLogin";
 import ProfilePelanggan from "./components/profile/PelangganProfile";
 import ListDriver from "./components/driver/ListDriver";
+import TestRegister from "./components/register/TestRegister";
 
 function App() {
   const pelanggans = JSON.parse(sessionStorage.getItem("pelanggans"));
@@ -46,6 +47,7 @@ function App() {
                   <Route path="/home" element={<TampilanHome />} />
                   <Route path="/registeradmin" element={<RegisterAdmin />} />
                   <Route path="/registerdriver" element={<RegisterDriver />} />
+                  <Route path="/testregist" element={<TestRegister />} />
                   <Route
                     path="/registerpelanggan"
                     element={<RegisterPelanggan />}

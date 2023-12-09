@@ -4,7 +4,7 @@ import axios from "axios";
 import Card from "react-bootstrap/Card";
 import logo from "../../assets/logo.png";
 import Swal from "sweetalert2";
-import { Container, Form, Button, Row, Col } from "react-bootstrap";
+import { Container, Form, Button, Row, Col, FloatingLabel } from "react-bootstrap";
 
 function LoginAdmin() {
   const [email, setEmail] = useState("");
@@ -71,45 +71,52 @@ function LoginAdmin() {
               </Card.Title>
               <Card.Text>
                 <h2 className="judullogin">Masuk</h2>
-                <Form>
-                  <Form.Group controlId="formEmail">
-                    <Form.Control
-                      type="email"
-                      placeholder="Email"
-                      value={email}
-                      onChange={(e) => {
-                        setEmail(e.target.value);
-                        setValidation((prevValidation) => ({
-                          ...prevValidation,
-                          email:
-                            !e.target.value ||
-                            /^\S+@\S+\.\S+$/.test(e.target.value),
-                        }));
-                      }}
-                    />
-                    {!validation.email && email.length > 0 && (
-                      <Form.Text className="text-danger">
-                        Format email tidak valid
-                      </Form.Text>
-                    )}
-                  </Form.Group>
-                  <Form.Group controlId="formpassword">
-                    <Form.Control
-                      type="password"
-                      placeholder="Password (minimal 8 karakter)"
-                      value={password}
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                      }}
-                      minLength="8"
-                    />
-                    {password.length > 0 && password.length < 8 && (
-                      <Form.Text className="text-danger">
-                        Password harus minimal 8 karakter
-                      </Form.Text>
-                    )}
-                  </Form.Group>
-                </Form>
+                <FloatingLabel
+                  controlId="floatingInput"
+                  label="Email address"
+                  className="mb-3"
+                >
+                  <Form.Control
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setValidation((prevValidation) => ({
+                        ...prevValidation,
+                        email:
+                          !e.target.value ||
+                          /^\S+@\S+\.\S+$/.test(e.target.value),
+                      }));
+                    }}
+                  />
+                  {!validation.email && email.length > 0 && (
+                    <Form.Text className="text-danger">
+                      Format email tidak valid
+                    </Form.Text>
+                  )}
+                </FloatingLabel>
+
+                <FloatingLabel
+                  controlId="floatingInput"
+                  label="Password"
+                  className="mb-3"
+                >
+                  <Form.Control
+                    type="password"
+                    placeholder="Password (minimal 8 karakter)"
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                    }}
+                    minLength="8"
+                  />
+                  {password.length > 0 && password.length < 8 && (
+                    <Form.Text className="text-danger">
+                      Password harus minimal 8 karakter
+                    </Form.Text>
+                  )}
+                </FloatingLabel>
 
                 <Button className="btnlogin btn btn-block" onClick={Login}>
                   Masuk

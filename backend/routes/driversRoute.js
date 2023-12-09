@@ -4,30 +4,41 @@ const router = express.Router();
 const Driver = require("../models/driver");
 const Order = require("../models/order");
 
-router.post("/registerdriver", async (req, res) => {
-  const newDriver = new Driver({
-    username: req.body.username,
-    namaLengkap: req.body.namaLengkap,
-    noNIM: req.body.noNIM,
-    noKTP: req.body.noKTP,
-    email: req.body.email,
-    noTelepon: req.body.noTelepon,
-    password: req.body.password,
-    tempatLahir: req.body.tempatLahir,
-    tanggalLahir: req.body.tanggalLahir,
-    provinsi: req.body.provinsi,
-    kabupatenKota: req.body.kabupatenKota,
-    kecamatanDesa: req.body.kecamatanDesa,
-    alamat: req.body.alamat,
-  });
-  try {
-    const driver = await newDriver.save();
-    console.log(driver);
-    res.send("Driver Register Succes");
-  } catch (error) {
-    return res.status(400).json({ error });
+const multer = require("multer");
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
+router.post(
+  "/registerdriver",
+  upload.single("imageProfile"),
+  async (req, res) => {
+    const imageString = req.file.buffer.toString("base64");
+
+    const newDriver = new Driver({
+      username: req.body.username,
+      namaLengkap: req.body.namaLengkap,
+      noNIM: req.body.noNIM,
+      noKTP: req.body.noKTP,
+      email: req.body.email,
+      noTelepon: req.body.noTelepon,
+      password: req.body.password,
+      tempatLahir: req.body.tempatLahir,
+      tanggalLahir: req.body.tanggalLahir,
+      provinsi: req.body.provinsi,
+      kabupatenKota: req.body.kabupatenKota,
+      kecamatanDesa: req.body.kecamatanDesa,
+      alamat: req.body.alamat,
+      imageProfile: imageString,
+    });
+    try {
+      const driver = await newDriver.save();
+      console.log(driver);
+      res.send("Driver Register Succes");
+    } catch (error) {
+      return res.status(400).json({ error });
+    }
   }
-});
+);
 
 router.get("/getalldrivers", async (req, res) => {
   try {
@@ -109,7 +120,5 @@ router.get("/getordersfordriver/:driverId", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch orders for driver" });
   }
 });
-
-module.exports = router;
 
 module.exports = router;

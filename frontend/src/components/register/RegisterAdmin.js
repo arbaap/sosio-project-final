@@ -152,7 +152,7 @@ function RegisterAdmin() {
                 </Form.Group>
 
                 <Button variant="primary mt-2" onClick={register}>
-                  Register
+                  Daftar
                 </Button>
               </Form>
             </div>

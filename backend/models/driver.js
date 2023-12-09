@@ -53,9 +53,12 @@ const driverSchema = mongoose.Schema(
     kecamatanDesa: {
       type: String,
     },
+    imageProfile: {
+      type: String,
+    },
     status: {
       type: String,
-      rqeuired: true,
+      required: true,
       default: "Pending",
     },
     alasanPenolakan: {
