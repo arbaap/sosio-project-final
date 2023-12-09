@@ -15,7 +15,7 @@ function DriverAdmin() {
         icon: "warning",
         confirmButtonText: "OK",
       }).then(() => {
-        window.location.href = "/loginadmin";
+        window.location.href = "/logindriver";
       });
 
       return;
@@ -27,7 +27,7 @@ function DriverAdmin() {
   return (
     <div className="tampilanadmin m-3">
       {showAdminContent && (
-        <Tab.Container id="left-tabs-example" defaultActiveKey="drivers">
+        <Tab.Container id="left-tabs-example" defaultActiveKey="datadrivers">
           <Row>
             <Col sm={3}>
               <Nav variant="pills" className="flex-column">
@@ -36,22 +36,27 @@ function DriverAdmin() {
                 </h2>
 
                 <Nav.Item>
-                  <Nav.Link eventKey="drivers">Drivers</Nav.Link>
+                  {/* <Nav.Link eventKey="drivers">Drivers</Nav.Link> */}
                   <Nav.Link eventKey="datadrivers">Data Driver</Nav.Link>
-                  <Nav.Link eventKey="pelanggan">Pelanggan</Nav.Link>
+                  <Nav.Link eventKey="completeorder">Complete Order</Nav.Link>
+                  <Nav.Link eventKey="prosesorder">Proses Order</Nav.Link>
+                  <Nav.Link eventKey="incoming">Incoming Orders</Nav.Link>
                 </Nav.Item>
               </Nav>
             </Col>
             <Col sm={9}>
               <Tab.Content>
-                <Tab.Pane eventKey="drivers">
-                  <Drivers />
-                </Tab.Pane>
                 <Tab.Pane eventKey="datadrivers">
                   <DataDrivers />
                 </Tab.Pane>
-                <Tab.Pane eventKey="pelanggan">
-                  <Orders />
+                <Tab.Pane eventKey="completeorder">
+                  <OrdersComplete />
+                </Tab.Pane>
+                <Tab.Pane eventKey="prosesorder">
+                  <OrdersHistory />
+                </Tab.Pane>
+                <Tab.Pane eventKey="incoming">
+                  <IncomingOrders />
                 </Tab.Pane>
               </Tab.Content>
             </Col>
@@ -105,150 +110,267 @@ export function DataDrivers() {
     </Container>
   );
 }
-export function Drivers() {
-  const [drivers, setdrivers] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(5);
+
+export function IncomingOrders() {
+  const [orders, setOrders] = useState([]);
+  const drivers = JSON.parse(sessionStorage.getItem("drivers"));
+  const driverId = drivers ? drivers._id : null;
 
   useEffect(() => {
-    fetchData();
+    if (driverId) {
+      fetchOrders();
+    }
+  }, [driverId]);
+
+  useEffect(() => {
+    fetchOrders();
   }, []);
 
-  const fetchData = async () => {
+  const fetchOrders = async () => {
     try {
-      const response = await axios.get("/api/drivers/getalldrivers");
-      setdrivers(response.data);
+      const response = await axios.get(
+        `/api/orders/ordersfordriver/${driverId}`
+      );
+      setOrders(response.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+  const handleApproveOrder = async (orderId, pelangganId) => {
+    const confirmResult = await Swal.fire({
+      title: "Yakin ingin menerima order?",
+      text: "Setelah diterima, order tidak dapat dibatalkan.",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Ya, Terima",
+      cancelButtonText: "Tidak",
+    });
+
+    if (confirmResult.isConfirmed) {
+      try {
+        const response = await axios.post("/api/orders/approveOrder", {
+          orderId,
+          pelangganId,
+        });
+
+        fetchOrders();
+
+        Swal.fire({
+          title: "Order Approved",
+          text: "Order has been approved successfully.",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
+
+        console.log(fetchOrders());
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+
+        Swal.fire({
+          title: "Error",
+          text: "Failed to approve order. Please try again.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
+    }
   };
-
-  const indexOfLastKeluhan = currentPage * perPage;
-  const indexOfFirstKeluhan = indexOfLastKeluhan - perPage;
-  const currentKeluhans = drivers.slice(
-    indexOfFirstKeluhan,
-    indexOfLastKeluhan
-  );
-
-  // async function selesaiKeluhan(keluhanid) {
-  //   try {
-  //     const result = await (
-  //       await axios.post("/api/keluhans/selesaikeluhan", {
-  //         keluhanid,
-  //       })
-  //     ).data;
-  //     console.log(result);
-  //     Swal.fire("Okay", "Keluhan Selesai", "success").then((result) => {
-  //       window.location.reload();
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //     Swal.fire("Oops", "Something went wrong", "error");
-  //   }
-  // }
 
   return (
     <Container>
       <h2>
-        <b>Daftar Driver</b>
+        <b>Daftar Pesanan</b>
       </h2>
       <Table responsive>
         <thead>
           <tr>
             <th>No</th>
-            <th>Nama Lengkap</th>
-            <th>NIM / KTP</th>
-            <th>Email</th>
-            <th>No Telepon</th>
-            <th>Alamat</th>
-            <th>Aksi</th>
+            <th>Nama Pelanggan</th>
+            <th>Additional Info</th>
+            <th>Status Order</th>
+            <th>Terima Order</th>
           </tr>
         </thead>
         <tbody>
-          {currentKeluhans.map((drivers, index) => {
-            let statusClass = "";
-            switch (drivers.status) {
-              case "Pending":
-                return null;
-              case "Diproses":
-                statusClass = "status-diterima";
-                break;
-              case "Ditolak":
-                statusClass = "status-ditolak";
-                break;
-              case "Selesai":
-                statusClass = "status-selesai";
-                break;
-              default:
-                break;
-            }
-            return (
-              <tr key={drivers._id}>
-                <td>{index + indexOfFirstKeluhan + 1}</td>
-                <td>{drivers.namaLengkap}</td>
-                <td>
-                  {drivers.noNIM} / {drivers.noKTP}
-                </td>
-                <td>{drivers.email}</td>
-                <td>{drivers.noTelepon}</td>
-                <td>{drivers.alamat}</td>
-
+          {orders
+            .filter((order) => order.statusOrder === "Pending")
+            .map((order, index) => (
+              <tr key={order._id}>
+                <td>{index + 1}</td>
+                <td>{order.pelangganName}</td>
+                <td>{order.additionalInfo}</td>
+                <td>{order.statusOrder}</td>
                 <td className="col-1">
                   <button
                     className="terimakeluhan btn-success"
-                    // onClick={() => selesaiKeluhan(keluhan._id)}
+                    onClick={() =>
+                      handleApproveOrder(order._id, order.pelangganId)
+                    }
                   >
-                    Selesai
+                    Terima
+                  </button>
+                  <button className="tolakkeluhan btn-danger">Tolak</button>
+                </td>
+              </tr>
+            ))}
+        </tbody>
+      </Table>
+    </Container>
+  );
+}
+
+export function OrdersHistory() {
+  const [orders, setOrders] = useState([]);
+  const drivers = JSON.parse(sessionStorage.getItem("drivers"));
+  const driverId = drivers ? drivers._id : null;
+
+  useEffect(() => {
+    if (driverId) {
+      fetchOrders();
+    }
+  }, [driverId]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    try {
+      const response = await axios.get(
+        `/api/orders/ordersfordriver/${driverId}`
+      );
+      setOrders(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // const handleApproveOrder = async (orderId, pelangganId) => {
+  //   const confirmResult = await Swal.fire({
+  //     title: "Yakin ingin menerima order?",
+  //     text: "Setelah diterima, order tidak dapat dibatalkan.",
+  //     icon: "question",
+  //     showCancelButton: true,
+  //     confirmButtonText: "Ya, Terima",
+  //     cancelButtonText: "Tidak",
+  //   });
+
+  //   if (confirmResult.isConfirmed) {
+  //     try {
+  //       const response = await axios.post("/api/orders/approveOrder", {
+  //         orderId,
+  //         pelangganId,
+  //       });
+
+  //       fetchOrders();
+
+  //       Swal.fire({
+  //         title: "Order Approved",
+  //         text: "Order has been approved successfully.",
+  //         icon: "success",
+  //         confirmButtonText: "OK",
+  //       });
+
+  //       console.log(fetchOrders());
+  //       console.log(response.data);
+  //     } catch (error) {
+  //       console.error(error);
+
+  //       Swal.fire({
+  //         title: "Error",
+  //         text: "Failed to approve order. Please try again.",
+  //         icon: "error",
+  //         confirmButtonText: "OK",
+  //       });
+  //     }
+  //   }
+  // };
+
+  const handleCompleteOrder = async (orderId) => {
+    const confirmResult = await Swal.fire({
+      title: "Yakin ingin menyelesaikan order?",
+      text: "Setelah diselesaikan, order akan berubah status menjadi 'Selesai Order'.",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Ya, Selesaikan",
+      cancelButtonText: "Tidak",
+    });
+
+    if (confirmResult.isConfirmed) {
+      try {
+        const response = await axios.post("/api/orders/completeOrder", {
+          orderId,
+        });
+
+        fetchOrders();
+
+        Swal.fire({
+          title: "Order Completed",
+          text: "Order has been completed successfully.",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
+
+        console.log(fetchOrders());
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+
+        Swal.fire({
+          title: "Error",
+          text: "Failed to complete order. Please try again.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
+    }
+  };
+
+  return (
+    <Container>
+      <h2>
+        <b>Proses Order</b>
+      </h2>
+      <Table responsive>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Nama Pelanggan</th>
+            <th>Additional Info</th>
+            <th>Status Order</th>
+            <th>Terima Order</th>
+          </tr>
+        </thead>
+        <tbody>
+          {orders
+            .filter((order) => order.statusOrder === "Proses Order")
+            .map((order, index) => (
+              <tr key={order._id}>
+                <td>{index + 1}</td>
+                <td>{order.pelangganName}</td>
+                <td>{order.additionalInfo}</td>
+                <td>{order.statusOrder}</td>
+                <td className="col-1">
+                  <button
+                    className="terimakeluhan btn-success"
+                    onClick={() =>
+                      handleCompleteOrder(order._id, order.pelangganId)
+                    }
+                  >
+                    Selesai Order
                   </button>
                 </td>
               </tr>
-            );
-          })}
+            ))}
         </tbody>
       </Table>
-      <Pagination
-        currentPage={currentPage}
-        perPage={perPage}
-        totalKeluhans={drivers.length}
-        onPageChange={handlePageChange}
-      />
     </Container>
   );
-
-  function Pagination({ currentPage, perPage, totalDrivers, onPageChange }) {
-    const pageNumbers = Math.ceil(totalDrivers / perPage);
-
-    return (
-      <nav>
-        <ul className="pagination">
-          {Array.from({ length: pageNumbers }, (_, i) => i + 1).map(
-            (pageNumber) => (
-              <li
-                key={pageNumber}
-                className={`page-item${
-                  currentPage === pageNumber ? " active" : ""
-                }`}
-              >
-                <button
-                  className="page-link"
-                  onClick={() => onPageChange(pageNumber)}
-                >
-                  {pageNumber}
-                </button>
-              </li>
-            )
-          )}
-        </ul>
-      </nav>
-    );
-  }
 }
 
-export function Orders() {
+export function OrdersComplete() {
   const [orders, setOrders] = useState([]);
   const drivers = JSON.parse(sessionStorage.getItem("drivers"));
   const driverId = drivers ? drivers._id : null;
@@ -277,7 +399,7 @@ export function Orders() {
   return (
     <Container>
       <h2>
-        <b>Daftar Pesanan</b>
+        <b>Complete Order</b>
       </h2>
       <Table responsive>
         <thead>
@@ -285,18 +407,20 @@ export function Orders() {
             <th>No</th>
             <th>Nama Pelanggan</th>
             <th>Additional Info</th>
-            {/* Tambahkan field lainnya yang ingin ditampilkan */}
+            <th>Status Order</th>
           </tr>
         </thead>
         <tbody>
-          {orders.map((order, index) => (
-            <tr key={order._id}>
-              <td>{index + 1}</td>
-              <td>{order.pelangganName}</td>
-              <td>{order.additionalInfo}</td>
-              {/* Tambahkan field lainnya yang ingin ditampilkan */}
-            </tr>
-          ))}
+          {orders
+            .filter((order) => order.statusOrder === "Selesai Order")
+            .map((order, index) => (
+              <tr key={order._id}>
+                <td>{index + 1}</td>
+                <td>{order.pelangganName}</td>
+                <td>{order.additionalInfo}</td>
+                <td>{order.statusOrder}</td>
+              </tr>
+            ))}
         </tbody>
       </Table>
     </Container>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const OrderForm = ({
   selectedDriver,
@@ -21,9 +22,21 @@ const OrderForm = ({
 
       onOrderSubmit(response.data);
 
+      Swal.fire({
+        icon: "info",
+        title: "Order Berhasil",
+        text: "Orderan Anda akan segera di proses",
+      });
+
       setAdditionalInfo("");
     } catch (error) {
       console.error("Error submitting order:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Order Gagal",
+        text: "Terjadi kesalahan saat mengirim pesanan. Silakan coba lagi.",
+      });
     }
   };
 

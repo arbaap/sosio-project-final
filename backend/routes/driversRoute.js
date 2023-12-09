@@ -4,7 +4,7 @@ const router = express.Router();
 const Driver = require("../models/driver");
 const Order = require("../models/order");
 
-router.post("/registermitra", async (req, res) => {
+router.post("/registerdriver", async (req, res) => {
   const newDriver = new Driver({
     username: req.body.username,
     namaLengkap: req.body.namaLengkap,
@@ -49,17 +49,19 @@ router.get("/getdriversbyid/:id", async (req, res) => {
 });
 
 router.post("/logindriv", async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const drivers = await Driver.findOne({
-      username: username,
-      password: password,
-    });
-    if (drivers) {
-      res.send(drivers);
+    const driver = await Driver.findOne({ email: email });
+
+    if (driver) {
+      if (driver.password === password) {
+        res.send(driver);
+      } else {
+        return res.status(400).json({ message: "Password is incorrect" });
+      }
     } else {
-      return res.status(400).json({ message: "login fail" });
+      return res.status(400).json({ message: "Email not found" });
     }
   } catch (error) {
     return res.status(400).json({ error });

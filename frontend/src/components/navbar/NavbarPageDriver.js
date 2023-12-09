@@ -60,7 +60,6 @@ const NavbarPageDriver = () => {
             ) : (
               <>
                 <Nav.Link href="/home">Home</Nav.Link>
-                <Nav.Link href="/registermitra">Daftar Mitra</Nav.Link>
                 <Nav.Link href="/logindriver">Login</Nav.Link>
               </>
             )}

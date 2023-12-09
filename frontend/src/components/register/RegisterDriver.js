@@ -101,7 +101,7 @@ function RegisterDriver() {
     };
 
     try {
-      const result = await axios.post("/api/drivers/registermitra", driver);
+      const result = await axios.post("/api/drivers/registerdriver", driver);
       console.log(result);
       Swal.fire("Selamat", "Registrasi Berhasil", "success").then((result) => {
         window.location.href = "/logindriver";

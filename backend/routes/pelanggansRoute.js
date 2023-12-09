@@ -49,24 +49,24 @@ router.get("/getpelanggansbyid/:id", async (req, res) => {
 });
 
 router.post("/loginpelanggan", async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const pelanggans = await Pelanggan.findOne({
-      username: username,
-      password: password,
-    });
-    if (pelanggans) {
-      res.send(pelanggans);
+    const pelanggan = await Pelanggan.findOne({ email: email });
+
+    if (pelanggan) {
+      if (pelanggan.password === password) {
+        res.send(pelanggan);
+      } else {
+        return res.status(400).json({ message: "Password is incorrect" });
+      }
     } else {
-      return res.status(400).json({ message: "login fail" });
+      return res.status(400).json({ message: "Email not found" });
     }
   } catch (error) {
     return res.status(400).json({ error });
   }
 });
-
-
 
 router.get("/getordersforpelanggan/:pelangganId", async (req, res) => {
   const pelangganId = req.params.pelangganId;

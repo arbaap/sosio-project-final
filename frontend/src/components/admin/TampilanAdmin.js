@@ -10,8 +10,8 @@ function Adminscreen() {
   const [showAdminContent, setShowAdminContent] = useState(false);
 
   useEffect(() => {
-    const pengguna = JSON.parse(sessionStorage.getItem("pengguna"));
-    if (!pengguna || !pengguna.isAdmin) {
+    const admin = JSON.parse(sessionStorage.getItem("admin"));
+    if (!admin || !admin.isAdmin) {
       Swal.fire({
         title: "Akses Ditolak",
         text: "Anda tidak memiliki izin untuk mengakses halaman ini.",
@@ -55,9 +55,10 @@ function Adminscreen() {
                 </Tab.Pane>
 
                 <Tab.Pane eventKey="laporan">
-                  <Pengaduans />
-                  <Keluhans />
-                  <Driver />
+                  {/* <Pengaduans />
+                  <Keluhans /> */}
+                  <ManageDriver />
+                  <Pelanggans />
                 </Tab.Pane>
 
                 <Tab.Pane eventKey="drivers">
@@ -75,12 +76,12 @@ function Adminscreen() {
 export default Adminscreen;
 
 export function Dashboard() {
-  const [keluhans, setkeluhans] = useState([]);
-  const [totalKeluhan, setTotalKeluhan] = useState(0);
-  const [totalKeluhanDiterima, setTotalKeluhanDiterima] = useState(0);
-  const [totalKeluhanDitolak, setTotalKeluhanDitolak] = useState(0);
-  const [totalKeluhanPending, setTotalKeluhanPending] = useState(0);
-  const [totalKeluhanSelesai, setTotalKeluhanSelesai] = useState(0);
+  const [orders, setOrders] = useState([]);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [totalOrdersDiterima, setTotalOrdersDiterima] = useState(0);
+  const [totalOrdersDitolak, setTotalOrdersDitolak] = useState(0);
+  const [totalOrdersPending, setTotalOrdersPending] = useState(0);
+  const [totalOrdersSelesai, setTotalOrdersSelesai] = useState(0);
 
   Chart.register(...registerables);
   Chart.register(LinearScale);
@@ -91,33 +92,33 @@ export function Dashboard() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("/api/keluhans/getallkeluhans");
+      const response = await axios.get("/api/orders/getallorders");
       const data = response.data;
 
-      setkeluhans(data);
+      setOrders(data);
 
-      const totalKeluhan = data.length;
-      setTotalKeluhan(totalKeluhan);
+      const totalOrders = data.length;
+      setTotalOrders(totalOrders);
 
-      const totalKeluhanDiterima = data.filter(
-        (keluhan) => keluhan.status === "Diproses"
+      const totalOrdersDiterima = data.filter(
+        (order) => order.statusOrder === "Proses Order"
       ).length;
-      setTotalKeluhanDiterima(totalKeluhanDiterima);
+      setTotalOrdersDiterima(totalOrdersDiterima);
 
-      const totalKeluhanSelesai = data.filter(
-        (keluhan) => keluhan.status === "Selesai"
+      const totalOrdersSelesai = data.filter(
+        (order) => order.statusOrder === "Selesai"
       ).length;
-      setTotalKeluhanSelesai(totalKeluhanSelesai);
+      setTotalOrdersSelesai(totalOrdersSelesai);
 
-      const totalKeluhanDitolak = data.filter(
-        (keluhan) => keluhan.status === "Ditolak"
+      const totalOrdersDitolak = data.filter(
+        (order) => order.statusOrder === "Ditolak"
       ).length;
-      setTotalKeluhanDitolak(totalKeluhanDitolak);
+      setTotalOrdersDitolak(totalOrdersDitolak);
 
-      const totalKeluhanPending = data.filter(
-        (keluhan) => keluhan.status === "Pending"
+      const totalOrdersPending = data.filter(
+        (order) => order.statusOrder === "Pending"
       ).length;
-      setTotalKeluhanPending(totalKeluhanPending);
+      setTotalOrdersPending(totalOrdersPending);
     } catch (error) {
       console.error(error);
     }
@@ -141,9 +142,9 @@ export function Dashboard() {
 
     datasets: [
       {
-        label: "Total Pelanggan",
+        label: "Total Order",
         type: "bar",
-        data: [totalKeluhan],
+        data: [totalOrders],
         backgroundColor: "#02a0fc",
         borderWidth: 1,
         borderRadius: 10,
@@ -151,7 +152,7 @@ export function Dashboard() {
       {
         label: "Proses",
         type: "bar",
-        data: [totalKeluhanDiterima],
+        data: [totalOrdersDiterima],
         backgroundColor: "#fec400",
         borderWidth: 1,
         borderRadius: 10,
@@ -159,7 +160,7 @@ export function Dashboard() {
       {
         label: "Selesai",
         type: "bar",
-        data: [totalKeluhanSelesai],
+        data: [totalOrdersSelesai],
         backgroundColor: "#14bd96",
         borderWidth: 1,
         borderRadius: 10,
@@ -167,7 +168,7 @@ export function Dashboard() {
       {
         label: "Ditolak",
         type: "bar",
-        data: [totalKeluhanDitolak],
+        data: [totalOrdersDitolak],
         backgroundColor: "#f12b2c",
         borderWidth: 1,
         borderRadius: 10,
@@ -175,7 +176,7 @@ export function Dashboard() {
       {
         label: "Pending",
         type: "bar",
-        data: [totalKeluhanPending],
+        data: [totalOrdersPending],
         backgroundColor: "#696969",
         borderWidth: 1,
         borderRadius: 10,
@@ -199,23 +200,23 @@ export function Dashboard() {
       </h2>
       <div className="laporanmasuk dashboard-box">
         <p> Masuk</p>
-        <p className="angkas">{totalKeluhan}</p>
+        <p className="angkas">{totalOrders}</p>
       </div>
       <div className="laporanditerima dashboard-box">
         <p>Diproses</p>
-        <p className="angkas">{totalKeluhanDiterima}</p>
+        <p className="angkas">{totalOrdersDiterima}</p>
       </div>
       <div className="laporanselesai dashboard-box">
         <p>Selesai</p>
-        <p className="angkas">{totalKeluhanSelesai}</p>
+        <p className="angkas">{totalOrdersSelesai}</p>
       </div>
       <div className="laporanditolak dashboard-box">
         <p>Ditolak</p>
-        <p className="angkas">{totalKeluhanDitolak}</p>
+        <p className="angkas">{totalOrdersDitolak}</p>
       </div>
       <div className="laporanpending dashboard-box">
         <p>Pending</p>
-        <p className="angkas">{totalKeluhanPending}</p>
+        <p className="angkas">{totalOrdersPending}</p>
       </div>
       <div className="chart-container justify-content-center">
         <h2>
@@ -229,347 +230,347 @@ export function Dashboard() {
   );
 }
 
-export function Pengaduans() {
-  const [keluhans, setkeluhans] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(5);
+// export function Pengaduans() {
+//   const [keluhans, setkeluhans] = useState([]);
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const [perPage] = useState(5);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+//   useEffect(() => {
+//     fetchData();
+//   }, []);
 
-  const fetchData = async () => {
-    try {
-      const response = await axios.get("/api/keluhans/getallkeluhans");
-      setkeluhans(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+//   const fetchData = async () => {
+//     try {
+//       const response = await axios.get("/api/keluhans/getallkeluhans");
+//       setkeluhans(response.data);
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   };
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+//   const handlePageChange = (pageNumber) => {
+//     setCurrentPage(pageNumber);
+//   };
 
-  const indexOfLastKeluhan = currentPage * perPage;
-  const indexOfFirstKeluhan = indexOfLastKeluhan - perPage;
-  const currentKeluhans = keluhans.slice(
-    indexOfFirstKeluhan,
-    indexOfLastKeluhan
-  );
+//   const indexOfLastKeluhan = currentPage * perPage;
+//   const indexOfFirstKeluhan = indexOfLastKeluhan - perPage;
+//   const currentKeluhans = keluhans.slice(
+//     indexOfFirstKeluhan,
+//     indexOfLastKeluhan
+//   );
 
-  async function selesaiKeluhan(keluhanid) {
-    try {
-      const result = await (
-        await axios.post("/api/keluhans/selesaikeluhan", {
-          keluhanid,
-        })
-      ).data;
-      console.log(result);
-      Swal.fire("Okay", "Keluhan Selesai", "success").then((result) => {
-        window.location.reload();
-      });
-    } catch (error) {
-      console.log(error);
-      Swal.fire("Oops", "Something went wrong", "error");
-    }
-  }
+//   async function selesaiKeluhan(keluhanid) {
+//     try {
+//       const result = await (
+//         await axios.post("/api/keluhans/selesaikeluhan", {
+//           keluhanid,
+//         })
+//       ).data;
+//       console.log(result);
+//       Swal.fire("Okay", "Keluhan Selesai", "success").then((result) => {
+//         window.location.reload();
+//       });
+//     } catch (error) {
+//       console.log(error);
+//       Swal.fire("Oops", "Something went wrong", "error");
+//     }
+//   }
 
-  return (
-    <Row>
-      <Col>
-        <h2>
-          <b>Semua Laporan</b>
-        </h2>
-        <Table responsive>
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Nama Warga</th>
-              <th>Judul Pengaduan</th>
-              <th>Alasan Ditolak</th>
-              <th>Status</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentKeluhans.map((keluhan, index) => {
-              let statusClass = "";
-              switch (keluhan.status) {
-                case "Pending":
-                  return null;
-                case "Diproses":
-                  statusClass = "status-diterima";
-                  break;
-                case "Ditolak":
-                  statusClass = "status-ditolak";
-                  break;
-                case "Selesai":
-                  statusClass = "status-selesai";
-                  break;
-                default:
-                  break;
-              }
-              return (
-                <tr key={keluhan._id}>
-                  <td>{index + indexOfFirstKeluhan + 1}</td>
-                  <td>{keluhan.namawarga}</td>
-                  <td>{keluhan.judulpengaduan}</td>
-                  <td>{keluhan.alasanPenolakan}</td>
-                  <td className={statusClass}>{keluhan.status}</td>
-                  <td className="col-1">
-                    {keluhan.status !== "Selesai" &&
-                      keluhan.status !== "Ditolak" && (
-                        <button
-                          className="terimakeluhan btn-success"
-                          onClick={() => selesaiKeluhan(keluhan._id)}
-                        >
-                          Selesai
-                        </button>
-                      )}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </Table>
-        <Pagination
-          currentPage={currentPage}
-          perPage={perPage}
-          totalKeluhans={keluhans.length}
-          onPageChange={handlePageChange}
-        />
-      </Col>
-    </Row>
-  );
+//   return (
+//     <Row>
+//       <Col>
+//         <h2>
+//           <b>Semua Laporan</b>
+//         </h2>
+//         <Table responsive>
+//           <thead>
+//             <tr>
+//               <th>No</th>
+//               <th>Nama Warga</th>
+//               <th>Judul Pengaduan</th>
+//               <th>Alasan Ditolak</th>
+//               <th>Status</th>
+//               <th>Aksi</th>
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {currentKeluhans.map((keluhan, index) => {
+//               let statusClass = "";
+//               switch (keluhan.status) {
+//                 case "Pending":
+//                   return null;
+//                 case "Diproses":
+//                   statusClass = "status-diterima";
+//                   break;
+//                 case "Ditolak":
+//                   statusClass = "status-ditolak";
+//                   break;
+//                 case "Selesai":
+//                   statusClass = "status-selesai";
+//                   break;
+//                 default:
+//                   break;
+//               }
+//               return (
+//                 <tr key={keluhan._id}>
+//                   <td>{index + indexOfFirstKeluhan + 1}</td>
+//                   <td>{keluhan.namawarga}</td>
+//                   <td>{keluhan.judulpengaduan}</td>
+//                   <td>{keluhan.alasanPenolakan}</td>
+//                   <td className={statusClass}>{keluhan.status}</td>
+//                   <td className="col-1">
+//                     {keluhan.status !== "Selesai" &&
+//                       keluhan.status !== "Ditolak" && (
+//                         <button
+//                           className="terimakeluhan btn-success"
+//                           onClick={() => selesaiKeluhan(keluhan._id)}
+//                         >
+//                           Selesai
+//                         </button>
+//                       )}
+//                   </td>
+//                 </tr>
+//               );
+//             })}
+//           </tbody>
+//         </Table>
+//         <Pagination
+//           currentPage={currentPage}
+//           perPage={perPage}
+//           totalKeluhans={keluhans.length}
+//           onPageChange={handlePageChange}
+//         />
+//       </Col>
+//     </Row>
+//   );
 
-  function Pagination({ currentPage, perPage, totalKeluhans, onPageChange }) {
-    const pageNumbers = Math.ceil(totalKeluhans / perPage);
+//   function Pagination({ currentPage, perPage, totalKeluhans, onPageChange }) {
+//     const pageNumbers = Math.ceil(totalKeluhans / perPage);
 
-    return (
-      <nav>
-        <ul className="pagination">
-          {Array.from({ length: pageNumbers }, (_, i) => i + 1).map(
-            (pageNumber) => (
-              <li
-                key={pageNumber}
-                className={`page-item${
-                  currentPage === pageNumber ? " active" : ""
-                }`}
-              >
-                <button
-                  className="page-link"
-                  onClick={() => onPageChange(pageNumber)}
-                >
-                  {pageNumber}
-                </button>
-              </li>
-            )
-          )}
-        </ul>
-      </nav>
-    );
-  }
-}
+//     return (
+//       <nav>
+//         <ul className="pagination">
+//           {Array.from({ length: pageNumbers }, (_, i) => i + 1).map(
+//             (pageNumber) => (
+//               <li
+//                 key={pageNumber}
+//                 className={`page-item${
+//                   currentPage === pageNumber ? " active" : ""
+//                 }`}
+//               >
+//                 <button
+//                   className="page-link"
+//                   onClick={() => onPageChange(pageNumber)}
+//                 >
+//                   {pageNumber}
+//                 </button>
+//               </li>
+//             )
+//           )}
+//         </ul>
+//       </nav>
+//     );
+//   }
+// }
 
-export function Keluhans() {
-  const [keluhans, setkeluhans] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
+// export function Keluhans() {
+//   const [keluhans, setkeluhans] = useState([]);
+//   const [currentPage, setCurrentPage] = useState(1);
+//   const [itemsPerPage] = useState(5);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const data = await (
-          await axios.get("/api/keluhans/getallkeluhans")
-        ).data;
-        setkeluhans(data);
-      } catch (error) {
-        console.log(error);
-      }
-    })();
-  }, []);
+//   useEffect(() => {
+//     (async () => {
+//       try {
+//         const data = await (
+//           await axios.get("/api/keluhans/getallkeluhans")
+//         ).data;
+//         setkeluhans(data);
+//       } catch (error) {
+//         console.log(error);
+//       }
+//     })();
+//   }, []);
 
-  async function terimaKeluhan(keluhanid) {
-    try {
-      const result = await (
-        await axios.post("/api/keluhans/terimakeluhan", {
-          keluhanid,
-        })
-      ).data;
-      console.log(result);
-      Swal.fire("Okay", "Keluhan Diterima", "success").then((result) => {
-        window.location.reload();
-      });
-    } catch (error) {
-      console.log(error);
-      Swal.fire("Oops", "Something went wrong", "error");
-    }
-  }
+//   async function terimaKeluhan(keluhanid) {
+//     try {
+//       const result = await (
+//         await axios.post("/api/keluhans/terimakeluhan", {
+//           keluhanid,
+//         })
+//       ).data;
+//       console.log(result);
+//       Swal.fire("Okay", "Keluhan Diterima", "success").then((result) => {
+//         window.location.reload();
+//       });
+//     } catch (error) {
+//       console.log(error);
+//       Swal.fire("Oops", "Something went wrong", "error");
+//     }
+//   }
 
-  async function tolakKeluhan(keluhanid) {
-    try {
-      const result = await Swal.fire({
-        title: "Alasan Penolakan",
-        input: "textarea",
-        inputPlaceholder: "Masukkan alasan penolakan",
-        showCancelButton: true,
-        confirmButtonText: "Tolak",
-        cancelButtonText: "Batal",
-        showLoaderOnConfirm: true,
-        preConfirm: (alasan) => {
-          return axios
-            .post("/api/keluhans/tolakkeluhan", {
-              keluhanid,
-              alasanPenolakan: alasan,
-            })
-            .then((response) => {
-              if (response.data === "Keluhan ditolak") {
-                Swal.fire(
-                  "Okay",
-                  "Keluhan Ditolak dengan alasan : \n " + alasan,
-                  "success"
-                ).then((result) => {
-                  window.location.reload();
-                });
-              } else {
-                Swal.fire("Oops", "Something went wrong", "error");
-              }
-            })
-            .catch((error) => {
-              Swal.fire("Oops", "Something went wrong", "error");
-            });
-        },
-        allowOutsideClick: () => !Swal.isLoading(),
-      });
+//   async function tolakKeluhan(keluhanid) {
+//     try {
+//       const result = await Swal.fire({
+//         title: "Alasan Penolakan",
+//         input: "textarea",
+//         inputPlaceholder: "Masukkan alasan penolakan",
+//         showCancelButton: true,
+//         confirmButtonText: "Tolak",
+//         cancelButtonText: "Batal",
+//         showLoaderOnConfirm: true,
+//         preConfirm: (alasan) => {
+//           return axios
+//             .post("/api/keluhans/tolakkeluhan", {
+//               keluhanid,
+//               alasanPenolakan: alasan,
+//             })
+//             .then((response) => {
+//               if (response.data === "Keluhan ditolak") {
+//                 Swal.fire(
+//                   "Okay",
+//                   "Keluhan Ditolak dengan alasan : \n " + alasan,
+//                   "success"
+//                 ).then((result) => {
+//                   window.location.reload();
+//                 });
+//               } else {
+//                 Swal.fire("Oops", "Something went wrong", "error");
+//               }
+//             })
+//             .catch((error) => {
+//               Swal.fire("Oops", "Something went wrong", "error");
+//             });
+//         },
+//         allowOutsideClick: () => !Swal.isLoading(),
+//       });
 
-      if (result.isDismissed) {
-        return;
-      }
-    } catch (error) {
-      console.log(error);
-      Swal.fire("Oops", "Something went wrong", "error");
-    }
-  }
+//       if (result.isDismissed) {
+//         return;
+//       }
+//     } catch (error) {
+//       console.log(error);
+//       Swal.fire("Oops", "Something went wrong", "error");
+//     }
+//   }
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+//   const handlePageChange = (pageNumber) => {
+//     setCurrentPage(pageNumber);
+//   };
 
-  const filteredKeluhans = keluhans.filter(
-    (keluhan) => keluhan.status === "Pending"
-  );
+//   const filteredKeluhans = keluhans.filter(
+//     (keluhan) => keluhan.status === "Pending"
+//   );
 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredKeluhans.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+//   const indexOfLastItem = currentPage * itemsPerPage;
+//   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+//   const currentItems = filteredKeluhans.slice(
+//     indexOfFirstItem,
+//     indexOfLastItem
+//   );
 
-  return (
-    <Row>
-      <Col>
-        <h2>
-          <b>Laporan Masuk</b>
-        </h2>
+//   return (
+//     <Row>
+//       <Col>
+//         <h2>
+//           <b>Laporan Masuk</b>
+//         </h2>
 
-        <Table responsive>
-          <thead className="">
-            <tr>
-              <th>No</th>
-              <th>Nama</th>
-              <th>Kategori</th>
-              <th>Judul Pengaduan</th>
-              <th>Isi Pengaduan</th>
-              <th>Tanggal</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
+//         <Table responsive>
+//           <thead className="">
+//             <tr>
+//               <th>No</th>
+//               <th>Nama</th>
+//               <th>Kategori</th>
+//               <th>Judul Pengaduan</th>
+//               <th>Isi Pengaduan</th>
+//               <th>Tanggal</th>
+//               <th>Aksi</th>
+//             </tr>
+//           </thead>
 
-          <tbody>
-            {currentItems.length > 0 ? (
-              currentItems.map((keluhan, index) => (
-                <tr key={keluhan._id}>
-                  <td>{index + indexOfFirstItem + 1}</td>
-                  <td>{keluhan.namawarga}</td>
-                  <td className="col-2">{keluhan.kategori}</td>
-                  <td>{keluhan.judulpengaduan}</td>
-                  <td>{keluhan.isipengaduan}</td>
-                  <td>
-                    {new Date(keluhan.createdAt).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "2-digit",
-                      year: "numeric",
-                    })}
-                  </td>
+//           <tbody>
+//             {currentItems.length > 0 ? (
+//               currentItems.map((keluhan, index) => (
+//                 <tr key={keluhan._id}>
+//                   <td>{index + indexOfFirstItem + 1}</td>
+//                   <td>{keluhan.namawarga}</td>
+//                   <td className="col-2">{keluhan.kategori}</td>
+//                   <td>{keluhan.judulpengaduan}</td>
+//                   <td>{keluhan.isipengaduan}</td>
+//                   <td>
+//                     {new Date(keluhan.createdAt).toLocaleDateString("en-US", {
+//                       month: "short",
+//                       day: "2-digit",
+//                       year: "numeric",
+//                     })}
+//                   </td>
 
-                  <td className="col-1">
-                    {keluhan.status !== "pending" && (
-                      <button
-                        className="terimakeluhan btn-success"
-                        onClick={() => terimaKeluhan(keluhan._id)}
-                      >
-                        Terima
-                      </button>
-                    )}
-                    {keluhan.status !== "pending" && (
-                      <button
-                        className="tolakkeluhan btn-danger"
-                        onClick={() => tolakKeluhan(keluhan._id)}
-                      >
-                        Tolak
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="7">Tidak ada keluhan yang tersedia.</td>
-              </tr>
-            )}
-          </tbody>
-        </Table>
+//                   <td className="col-1">
+//                     {keluhan.status !== "pending" && (
+//                       <button
+//                         className="terimakeluhan btn-success"
+//                         onClick={() => terimaKeluhan(keluhan._id)}
+//                       >
+//                         Terima
+//                       </button>
+//                     )}
+//                     {keluhan.status !== "pending" && (
+//                       <button
+//                         className="tolakkeluhan btn-danger"
+//                         onClick={() => tolakKeluhan(keluhan._id)}
+//                       >
+//                         Tolak
+//                       </button>
+//                     )}
+//                   </td>
+//                 </tr>
+//               ))
+//             ) : (
+//               <tr>
+//                 <td colSpan="7">Tidak ada keluhan yang tersedia.</td>
+//               </tr>
+//             )}
+//           </tbody>
+//         </Table>
 
-        <Pagination
-          currentPage={currentPage}
-          itemsPerPage={itemsPerPage}
-          totalItems={filteredKeluhans.length}
-          onPageChange={handlePageChange}
-        />
-      </Col>
-    </Row>
-  );
+//         <Pagination
+//           currentPage={currentPage}
+//           itemsPerPage={itemsPerPage}
+//           totalItems={filteredKeluhans.length}
+//           onPageChange={handlePageChange}
+//         />
+//       </Col>
+//     </Row>
+//   );
 
-  function Pagination({ currentPage, itemsPerPage, totalItems, onPageChange }) {
-    const pageNumbers = Math.ceil(totalItems / itemsPerPage);
+//   function Pagination({ currentPage, itemsPerPage, totalItems, onPageChange }) {
+//     const pageNumbers = Math.ceil(totalItems / itemsPerPage);
 
-    return (
-      <nav>
-        <ul className="pagination">
-          {Array.from({ length: pageNumbers }, (_, i) => i + 1).map(
-            (pageNumber) => (
-              <li
-                key={pageNumber}
-                className={`page-item${
-                  currentPage === pageNumber ? " active" : ""
-                }`}
-              >
-                <button
-                  className="page-link"
-                  onClick={() => onPageChange(pageNumber)}
-                >
-                  {pageNumber}
-                </button>
-              </li>
-            )
-          )}
-        </ul>
-      </nav>
-    );
-  }
-}
+//     return (
+//       <nav>
+//         <ul className="pagination">
+//           {Array.from({ length: pageNumbers }, (_, i) => i + 1).map(
+//             (pageNumber) => (
+//               <li
+//                 key={pageNumber}
+//                 className={`page-item${
+//                   currentPage === pageNumber ? " active" : ""
+//                 }`}
+//               >
+//                 <button
+//                   className="page-link"
+//                   onClick={() => onPageChange(pageNumber)}
+//                 >
+//                   {pageNumber}
+//                 </button>
+//               </li>
+//             )
+//           )}
+//         </ul>
+//       </nav>
+//     );
+//   }
+// }
 
 export function Drivers() {
   const [drivers, setdrivers] = useState([]);
@@ -775,7 +776,7 @@ export function Drivers() {
   }
 }
 
-export function Driver() {
+export function ManageDriver() {
   const [drivers, setdrivers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage] = useState(5);
@@ -805,7 +806,7 @@ export function Driver() {
     <Row>
       <Col>
         <h2>
-          <b>Daftar Driver</b>
+          <b>List Driver</b>
         </h2>
         <Table responsive>
           <thead>
@@ -843,14 +844,204 @@ export function Driver() {
                   <td>{driver.email}</td>
                   <td>{driver.alamat}</td>
                   <td className={statusClass}>{driver.status}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </Table>
+        <Pagination
+          currentPage={currentPage}
+          perPage={perPage}
+          totalDrivers={drivers.length}
+          onPageChange={handlePageChange}
+        />
+      </Col>
+    </Row>
+  );
+
+  function Pagination({ currentPage, perPage, totalDrivers, onPageChange }) {
+    const pageNumbers = Math.ceil(totalDrivers / perPage);
+
+    return (
+      <nav>
+        <ul className="pagination">
+          {Array.from({ length: pageNumbers }, (_, i) => i + 1).map(
+            (pageNumber) => (
+              <li
+                key={pageNumber}
+                className={`page-item${
+                  currentPage === pageNumber ? " active" : ""
+                }`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() => onPageChange(pageNumber)}
+                >
+                  {pageNumber}
+                </button>
+              </li>
+            )
+          )}
+        </ul>
+      </nav>
+    );
+  }
+}
+
+export function Pelanggans() {
+  const [pelanggans, setpelanggans] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(5);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("/api/pelanggans/getallpelanggans");
+      setpelanggans(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const indexOfLastPelanggan = currentPage * perPage;
+  const indexOfFirstPelanggan = indexOfLastPelanggan - perPage;
+  const currentPelanggans = pelanggans.slice(
+    indexOfFirstPelanggan,
+    indexOfLastPelanggan
+  );
+
+  // async function selesaiKeluhan(keluhanid) {
+  //   try {
+  //     const result = await (
+  //       await axios.post("/api/keluhans/selesaikeluhan", {
+  //         keluhanid,
+  //       })
+  //     ).data;
+  //     console.log(result);
+  //     Swal.fire("Okay", "Keluhan Selesai", "success").then((result) => {
+  //       window.location.reload();
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //     Swal.fire("Oops", "Something went wrong", "error");
+  //   }
+  // }
+
+  const terimaDriver = async (driverid) => {
+    try {
+      const result = await (
+        await axios.post("/api/drivers/terimadriver", {
+          driverid,
+        })
+      ).data;
+      console.log(result);
+      Swal.fire("Okay", "Driver Diterima", "success").then((result) => {
+        window.location.reload();
+      });
+    } catch (error) {
+      console.log(error);
+      Swal.fire("Oops", "Something went wrong", "error");
+    }
+  };
+
+  const tolakDriver = async (driverid) => {
+    try {
+      const result = await Swal.fire({
+        title: "Alasan Penolakan",
+        input: "textarea",
+        inputPlaceholder: "Masukkan alasan penolakan",
+        showCancelButton: true,
+        confirmButtonText: "Tolak",
+        cancelButtonText: "Batal",
+        showLoaderOnConfirm: true,
+        preConfirm: (alasan) => {
+          return axios
+            .post("/api/drivers/tolakdriver", {
+              driverid,
+              alasanPenolakan: alasan,
+            })
+            .then((response) => {
+              if (response.data === "Driver ditolak") {
+                Swal.fire(
+                  "Okay",
+                  "Driver Ditolak dengan alasan : \n " + alasan,
+                  "success"
+                ).then((result) => {
+                  window.location.reload();
+                });
+              } else {
+                Swal.fire("Oops", "Something went wrong", "error");
+              }
+            })
+            .catch((error) => {
+              Swal.fire("Oops", "Something went wrong", "error");
+            });
+        },
+        allowOutsideClick: () => !Swal.isLoading(),
+      });
+
+      if (result.isDismissed) {
+        return;
+      }
+    } catch (error) {
+      console.log(error);
+      Swal.fire("Oops", "Something went wrong", "error");
+    }
+  };
+
+  return (
+    <Row>
+      <Col>
+        <h2>
+          <b>Daftar Pelanggan</b>
+        </h2>
+        <Table responsive>
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Nama Lengkap</th>
+              <th>No Telepon</th>
+              <th>Prov</th>
+              <th>Kab</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentPelanggans.map((pelanggans, index) => {
+              return (
+                <tr key={pelanggans._id}>
+                  <td>{index + indexOfFirstPelanggan + 1}</td>
+                  <td>{pelanggans.namaLengkap}</td>
+
+                  <td>{pelanggans.noTelepon}</td>
+                  <td>{pelanggans.provinsi}</td>
+                  <td>{pelanggans.kabupatenKota}</td>
+                  <td>{pelanggans.status}</td>
+
                   <td className="col-1">
-                    {driver.status !== "pending" && (
-                      <button className="terimakeluhan btn-success">
+                    {pelanggans.status !== "pending" && (
+                      <button
+                        className="terimakeluhan btn-success"
+                        onClick={() => terimaDriver(pelanggans._id)}
+                      >
                         Terima
                       </button>
                     )}
-                    {driver.status !== "pending" && (
-                      <button className="tolakkeluhan btn-danger">Tolak</button>
+                    {pelanggans.status !== "pending" && (
+                      <button
+                        className="tolakkeluhan btn-danger"
+                        onClick={() => tolakDriver(pelanggans._id)}
+                      >
+                        Tolak
+                      </button>
                     )}
                   </td>
                 </tr>
@@ -861,7 +1052,7 @@ export function Driver() {
         <Pagination
           currentPage={currentPage}
           perPage={perPage}
-          totalDrivers={drivers.length}
+          totalKeluhans={pelanggans.length}
           onPageChange={handlePageChange}
         />
       </Col>

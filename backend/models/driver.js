@@ -65,6 +65,16 @@ const driverSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    orders: [
+      {
+        orderId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "order",
+        },
+        pelangganName: String,
+        additionalInfo: String,
+      },
+    ],
   },
   {
     timestamps: true,

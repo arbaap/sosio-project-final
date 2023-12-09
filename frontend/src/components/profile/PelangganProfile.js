@@ -7,12 +7,12 @@ const ProfilePelanggan = () => {
   return (
     <Container>
       <div className="tampilanadmin m-3">
-        <Tab.Container id="left-tabs-example" defaultActiveKey="dashboard">
+        <Tab.Container id="left-tabs-example" defaultActiveKey="profile">
           <Row>
             <Col sm={3}>
               <Nav variant="pills" className="flex-column">
                 <h2>
-                  <b>Admin Panel</b>
+                  <b>UINJEK</b>
                 </h2>
                 <Nav.Item>
                   <Nav.Link eventKey="profile">Profile</Nav.Link>
@@ -101,7 +101,7 @@ export function History() {
   return (
     <Container>
       <h2>
-        <b>Daftar Pesanan</b>
+        <b>Riwayat Order</b>
       </h2>
       <Table responsive>
         <thead>
@@ -109,6 +109,8 @@ export function History() {
             <th>No</th>
             <th>Nama Driver</th>
             <th>Additional Info</th>
+            <th>Status Order</th>
+            <th>Biaya</th>
           </tr>
         </thead>
         <tbody>
@@ -117,6 +119,7 @@ export function History() {
               <td>{index + 1}</td>
               <td>{order.driverName}</td>
               <td>{order.additionalInfo}</td>
+              <td>{order.statusOrder}</td>
             </tr>
           ))}
         </tbody>

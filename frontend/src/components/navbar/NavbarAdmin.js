@@ -7,7 +7,7 @@ import logo from "../../assets/img/gmaps/driver.png";
 import Swal from "sweetalert2";
 
 const NavbarAdmin = () => {
-  const pengguna = JSON.parse(sessionStorage.getItem("pengguna"));
+  const admin = JSON.parse(sessionStorage.getItem("admin"));
 
   function logout(event) {
     event.preventDefault();
@@ -22,9 +22,9 @@ const NavbarAdmin = () => {
       cancelButtonText: "Tidak",
     }).then((result) => {
       if (result.isConfirmed) {
-        sessionStorage.removeItem("pengguna");
+        sessionStorage.removeItem("admin");
         Swal.fire("Okay", "Logout Berhasil", "success").then(() => {
-          window.location.href = "/logindriver";
+          window.location.href = "/loginadmin";
         });
       }
     });
@@ -39,7 +39,7 @@ const NavbarAdmin = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto right">
-            {pengguna ? (
+            {admin ? (
               <>
                 <NavDropdown
                   title={<span style={{ color: "white" }}>Admin</span>}
@@ -56,7 +56,6 @@ const NavbarAdmin = () => {
             ) : (
               <>
                 <Nav.Link href="/home">Home</Nav.Link>
-                <Nav.Link href="/registermitra">Daftar Mitra</Nav.Link>
                 <Nav.Link href="/login">Login</Nav.Link>
               </>
             )}

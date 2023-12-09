@@ -4,75 +4,124 @@ import axios from "axios";
 import Card from "react-bootstrap/Card";
 import logo from "../../assets/logo.png";
 import Swal from "sweetalert2";
-import { Button } from "react-bootstrap";
+import { Container, Form, Button, Row, Col } from "react-bootstrap";
 
 function DriverLogin() {
-  const [username, setusername] = useState("");
-  const [password, setpassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [validation, setValidation] = useState({
+    email: true,
+    password: true,
+  });
 
   async function Login() {
-    const drivers = {
-      username,
+    if (!email || !password) {
+      Swal.fire(
+        "Peringatan",
+        "Harap isi semua kolom yang diperlukan",
+        "warning"
+      );
+      return;
+    }
+
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      Swal.fire("Peringatan", "Format email tidak valid", "warning");
+      return;
+    }
+
+    if (password.length < 8) {
+      Swal.fire("Peringatan", "Password harus minimal 8 karakter", "warning");
+      return;
+    }
+    const driver = {
+      email,
       password,
     };
-    console.log(drivers);
+    console.log(driver);
     try {
-      const result = (await axios.post("/api/drivers/logindriv", drivers)).data;
+      const result = (await axios.post("/api/drivers/logindriv", driver)).data;
       Swal.fire("Okay", "Login Berhasil", "success").then((result) => {
         window.location.href = "/admindriver";
       });
       sessionStorage.setItem("drivers", JSON.stringify(result));
     } catch (error) {
-      Swal.fire("oops", "something went wrong", "error");
+      if (error.response) {
+        if (error.response.status === 400) {
+          Swal.fire("Oops", error.response.data.message, "error");
+        } else {
+          Swal.fire("Oops", "Something went wrong", "error");
+        }
+      } else if (error.request) {
+        // error server
+      } else {
+        // error req
+      }
     }
   }
 
   return (
-    <div className="container">
-      <div className="row justify-content-center mt-5">
-        <div className="col">
+    <Container>
+      <Row className="row justify-content-center mt-5">
+        <Col>
           <Card className="cardmodal">
             <Card.Body>
               <Card.Title className="text-center">
                 <img className="img-logo" src={logo} alt="" />
-                <h2 className="mt-2"> Driver</h2>
-                <h1>UINJEK</h1>
+                <h2>Driver Login</h2>
               </Card.Title>
               <Card.Text>
                 <h2 className="judullogin">Masuk</h2>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="username"
-                  value={username}
-                  onChange={(e) => {
-                    setusername(e.target.value);
-                  }}
-                />
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="password"
-                  value={password}
-                  onChange={(e) => {
-                    setpassword(e.target.value);
-                  }}
-                />
+                <Form>
+                  <Form.Group controlId="formEmail">
+                    <Form.Control
+                      type="email"
+                      placeholder="Email"
+                      value={email}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setValidation((prevValidation) => ({
+                          ...prevValidation,
+                          email:
+                            !e.target.value ||
+                            /^\S+@\S+\.\S+$/.test(e.target.value),
+                        }));
+                      }}
+                    />
+                    {!validation.email && email.length > 0 && (
+                      <Form.Text className="text-danger">
+                        Format email tidak valid
+                      </Form.Text>
+                    )}
+                  </Form.Group>
+                  <Form.Group controlId="formpassword">
+                    <Form.Control
+                      type="password"
+                      placeholder="Password (minimal 8 karakter)"
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                      }}
+                      minLength="8"
+                    />
+                    {password.length > 0 && password.length < 8 && (
+                      <Form.Text className="text-danger">
+                        Password harus minimal 8 karakter
+                      </Form.Text>
+                    )}
+                  </Form.Group>
+                </Form>
                 <Button className="btnlogin btn btn-block" onClick={Login}>
                   Masuk
                 </Button>
-                <p className="mt-3 text-center" style={{ fontSize: 8 }}>
-                  Belum Punya Akun?{" "}
-                  <a href="/registermitra" className="register-link">
-                    Daftar Disini
-                  </a>
-                </p>
+                <p className="mt-3 text-center">
+                  Belum punya akun? <a href="/registerdriver">Daftar Driver</a>
+                </p>{" "}
               </Card.Text>
             </Card.Body>
           </Card>
-        </div>
-      </div>
-    </div>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 
