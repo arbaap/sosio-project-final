@@ -32,7 +32,7 @@ function RegisterDriver() {
 
   const [selectedKecamatan, setSelectedKecamatan] = useState("");
 
-  const apiUrl = "https://api.binderbyte.com";
+  const apiUrl = "https:/https://uinjek-backend.vercel.app/api.binderbyte.com";
   const apiKey =
     "1e497e09cea285d56ce02eb5ce9497b55de71665ad570a6d6ddbe5daa9927324";
 
@@ -112,7 +112,10 @@ function RegisterDriver() {
     formData.append("imageProfile", imageProfile);
 
     try {
-      const result = await axios.post("/api/drivers/registerdriver", formData);
+      const result = await axios.post(
+        "https://uinjek-backend.vercel.app/api/drivers/registerdriver",
+        formData
+      );
       console.log(result);
       Swal.fire("Selamat", "Registrasi Berhasil", "success").then((result) => {
         window.location.href = "/logindriver";

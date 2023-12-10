@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams, Link } from "react-router-dom";
-import {  Button, Modal, Container, Col, Row } from "react-bootstrap";
+import { Button, Modal, Container, Col, Row } from "react-bootstrap";
 import { IoArrowBackOutline } from "react-icons/io5";
 
 function DetailKeluhan({ match }) {
@@ -13,9 +13,12 @@ function DetailKeluhan({ match }) {
     (async () => {
       try {
         const data = (
-          await axios.post("/api/keluhans/getkeluhanbyid", {
-            keluhanid,
-          })
+          await axios.post(
+            "https://uinjek-backend.vercel.app/api/keluhans/getkeluhanbyid",
+            {
+              keluhanid,
+            }
+          )
         ).data;
         setkeluhan(data);
       } catch (err) {}

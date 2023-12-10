@@ -20,7 +20,9 @@ function ManagePelanggans() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("/api/pelanggans/getallpelanggans");
+      const response = await axios.get(
+        "https://uinjek-backend.vercel.app/api/pelanggans/getallpelanggans"
+      );
       setpelanggans(response.data);
     } catch (error) {
       console.log(error);
@@ -42,9 +44,12 @@ function ManagePelanggans() {
   const terimaPelanggan = async (pelangganid) => {
     try {
       const result = await (
-        await axios.post("/api/pelanggans/terimapelanggan", {
-          pelangganid,
-        })
+        await axios.post(
+          "https://uinjek-backend.vercel.app/api/pelanggans/terimapelanggan",
+          {
+            pelangganid,
+          }
+        )
       ).data;
       console.log(result);
       Swal.fire("Okay", "Driver Diterima", "success").then((result) => {
@@ -68,10 +73,13 @@ function ManagePelanggans() {
         showLoaderOnConfirm: true,
         preConfirm: (alasan) => {
           return axios
-            .post("/api/pelanggans/tolakpelanggan", {
-              pelangganid,
-              alasanPenolakan: alasan,
-            })
+            .post(
+              "https://uinjek-backend.vercel.app/api/pelanggans/tolakpelanggan",
+              {
+                pelangganid,
+                alasanPenolakan: alasan,
+              }
+            )
             .then((response) => {
               if (response.data === "Driver ditolak") {
                 Swal.fire(

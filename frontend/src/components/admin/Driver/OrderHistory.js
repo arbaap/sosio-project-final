@@ -25,7 +25,7 @@ function OrdersHistory() {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(
-        `/api/orders/ordersfordriver/${driverId}`
+        `https://uinjek-backend.vercel.app/api/orders/ordersfordriver/${driverId}`
       );
       setOrders(response.data);
       setLoading(false);
@@ -47,7 +47,7 @@ function OrdersHistory() {
 
   //   if (confirmResult.isConfirmed) {
   //     try {
-  //       const response = await axios.post("/api/orders/approveOrder", {
+  //       const response = await axios.post("https://uinjek-backend.vercel.app/api/orders/approveOrder", {
   //         orderId,
   //         pelangganId,
   //       });
@@ -88,9 +88,12 @@ function OrdersHistory() {
 
     if (confirmResult.isConfirmed) {
       try {
-        const response = await axios.post("/api/orders/completeOrder", {
-          orderId,
-        });
+        const response = await axios.post(
+          "https://uinjek-backend.vercel.app/api/orders/completeOrder",
+          {
+            orderId,
+          }
+        );
 
         fetchOrders();
 

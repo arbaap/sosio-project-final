@@ -31,7 +31,7 @@ function RegisterPelanggan() {
 
   const [selectedKecamatan, setSelectedKecamatan] = useState("");
 
-  const apiUrl = "https://api.binderbyte.com";
+  const apiUrl = "https:/https://uinjek-backend.vercel.app/api.binderbyte.com";
   const apiKey =
     "1e497e09cea285d56ce02eb5ce9497b55de71665ad570a6d6ddbe5daa9927324";
 
@@ -109,7 +109,7 @@ function RegisterPelanggan() {
 
     try {
       const result = await axios.post(
-        "/api/pelanggans/registerpelanggan",
+        "https://uinjek-backend.vercel.app/api/pelanggans/registerpelanggan",
         driver
       );
       console.log(result);

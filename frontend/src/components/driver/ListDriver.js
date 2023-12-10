@@ -60,7 +60,9 @@ function ListDriver() {
 
   const fetchDrivers = async () => {
     try {
-      const response = await axios.get("api/drivers/getalldrivers");
+      const response = await axios.get(
+        "https://uinjek-backend.vercel.app/api/drivers/getalldrivers"
+      );
       const driversWithMotorcycles = response.data.map((driver) => {
         const motorcycle =
           driver.motorcycles && driver.motorcycles.length > 0

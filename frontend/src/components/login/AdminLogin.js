@@ -50,7 +50,12 @@ function LoginAdmin() {
     };
     console.log(admin);
     try {
-      const result = (await axios.post("/api/admins/login", admin)).data;
+      const result = (
+        await axios.post(
+          "https://uinjek-backend.vercel.app/api/admins/login",
+          admin
+        )
+      ).data;
       Swal.fire("Okay", "Login Berhasil", "success").then((result) => {
         window.location.href = "/admin";
       });

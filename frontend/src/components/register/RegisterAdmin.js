@@ -54,7 +54,10 @@ function RegisterAdmin() {
     };
 
     try {
-      const result = await axios.post("/api/admins/register", admin).data;
+      const result = await axios.post(
+        "https://uinjek-backend.vercel.app/api/admins/register",
+        admin
+      ).data;
       setName("");
       setEmail("");
       setPassword("");

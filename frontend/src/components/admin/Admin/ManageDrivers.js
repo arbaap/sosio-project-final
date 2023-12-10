@@ -18,7 +18,9 @@ export function ManageDrivers() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("/api/drivers/getalldrivers");
+      const response = await axios.get(
+        "https://uinjek-backend.vercel.app/api/drivers/getalldrivers"
+      );
       setdrivers(response.data);
     } catch (error) {
       console.log(error);
@@ -77,7 +79,6 @@ export function ManageDrivers() {
                     <td>{driver.email}</td>
                     <td>{driver.alamat}</td>
                     <td className={statusClass}>{driver.status}</td>
-                    
                   </tr>
                 );
               })

@@ -21,7 +21,9 @@ function Dashboard() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("/api/orders/getallorders");
+      const response = await axios.get(
+        "https://uinjek-backend.vercel.app/api/orders/getallorders"
+      );
       const data = response.data;
 
       setOrders(data);

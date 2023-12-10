@@ -17,7 +17,7 @@ function OrderHistory() {
   const fetchOrderHistory = async () => {
     try {
       const response = await axios.get(
-        `/api/orders/getordersbypelanggan/${pelanggan._id}`
+        `https://uinjek-backend.vercel.app/api/orders/getordersbypelanggan/${pelanggan._id}`
       );
       setOrderHistory(response.data);
     } catch (error) {

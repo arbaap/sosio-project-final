@@ -77,11 +77,15 @@ function DataDrivers() {
       formData.append("imageMotorcycle", motorData.imageMotorcycle);
 
       const response = (
-        await axios.post(`/api/drivers/addmotor/${driverId}`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
+        await axios.post(
+          `https://uinjek-backend.vercel.app/api/drivers/addmotor/${driverId}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        )
       ).data;
 
       console.log(response);

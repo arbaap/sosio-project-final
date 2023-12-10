@@ -19,7 +19,9 @@ function ReportDrivers() {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("/api/drivers/getalldrivers");
+      const response = await axios.get(
+        "https://uinjek-backend.vercel.app/api/drivers/getalldrivers"
+      );
       setdrivers(response.data);
     } catch (error) {
       console.log(error);
@@ -29,9 +31,12 @@ function ReportDrivers() {
   const terimaDriver = async (driverid) => {
     try {
       const result = await (
-        await axios.post("/api/drivers/terimadriver", {
-          driverid,
-        })
+        await axios.post(
+          "https://uinjek-backend.vercel.app/api/drivers/terimadriver",
+          {
+            driverid,
+          }
+        )
       ).data;
       console.log(result);
       Swal.fire("Okay", "Driver Diterima", "success").then((result) => {
@@ -55,7 +60,7 @@ function ReportDrivers() {
         showLoaderOnConfirm: true,
         preConfirm: (alasan) => {
           return axios
-            .post("/api/drivers/tolakdriver", {
+            .post("https://uinjek-backend.vercel.app/api/drivers/tolakdriver", {
               driverid,
               alasanPenolakan: alasan,
             })

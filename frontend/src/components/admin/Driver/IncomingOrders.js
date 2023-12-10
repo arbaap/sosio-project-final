@@ -25,7 +25,7 @@ function IncomingOrders() {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(
-        `/api/orders/ordersfordriver/${driverId}`
+        `https://uinjek-backend.vercel.app/api/orders/ordersfordriver/${driverId}`
       );
       setOrders(response.data);
       setLoading(false);
@@ -47,10 +47,13 @@ function IncomingOrders() {
 
     if (confirmResult.isConfirmed) {
       try {
-        const response = await axios.post("/api/orders/approveOrder", {
-          orderId,
-          pelangganId,
-        });
+        const response = await axios.post(
+          "https://uinjek-backend.vercel.app/api/orders/approveOrder",
+          {
+            orderId,
+            pelangganId,
+          }
+        );
 
         fetchOrders();
 

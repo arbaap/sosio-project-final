@@ -10,16 +10,19 @@ const OrderForm = ({
   onOrderSubmit,
 }) => {
   const [additionalInfo, setAdditionalInfo] = useState("");
-const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const handleOrderSubmit = async () => {
     try {
       setLoading(true);
-      const response = await axios.post("api/orders/submitorder", {
-        driverId: selectedDriver._id,
-        pelangganName,
-        pelangganId,
-        additionalInfo,
-      });
+      const response = await axios.post(
+        "https://uinjek-backend.vercel.app/api/orders/submitorder",
+        {
+          driverId: selectedDriver._id,
+          pelangganName,
+          pelangganId,
+          additionalInfo,
+        }
+      );
 
       onOrderSubmit(response.data);
 
