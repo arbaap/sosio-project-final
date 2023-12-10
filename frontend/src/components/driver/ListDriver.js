@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Card, Container, Table, Spinner } from "react-bootstrap";
+import {
+  Card,
+  Container,
+  Table,
+  Spinner,
+  Modal,
+  Button,
+} from "react-bootstrap";
 import axios from "axios";
 import imageUrl from "../../assets/logo.png";
 import OrderForm from "./OrderForm";
@@ -10,6 +17,9 @@ function ListDriver() {
   const pelanggan = JSON.parse(sessionStorage.getItem("pelanggans"));
 
   const [loading, setLoading] = useState(true);
+  const [showDriverModal, setShowDriverModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedMotorcycle, setSelectedMotorcycle] = useState(null);
 
   useEffect(() => {
     fetchDrivers();
@@ -18,7 +28,19 @@ function ListDriver() {
   const fetchDrivers = async () => {
     try {
       const response = await axios.get("api/drivers/getalldrivers");
-      setDrivers(response.data);
+      const driversWithMotorcycles = response.data.map((driver) => {
+        const motorcycle =
+          driver.motorcycles && driver.motorcycles.length > 0
+            ? driver.motorcycles[0]
+            : null;
+
+        return {
+          ...driver,
+          motorcycle: motorcycle,
+        };
+      });
+
+      setDrivers(driversWithMotorcycles);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching drivers:", error);
@@ -29,6 +51,16 @@ function ListDriver() {
   const handleOrderSubmit = (orderInfo) => {
     console.log("Order Submitted:", orderInfo);
     setSelectedDriver(null);
+  };
+
+  const handleShowDriverModal = (driver) => {
+    setSelectedImage(driver.imageProfile);
+    setSelectedMotorcycle(driver.motorcycle);
+    setShowDriverModal(true);
+  };
+
+  const handleHideDriverModal = () => {
+    setShowDriverModal(false);
   };
 
   return (
@@ -44,6 +76,7 @@ function ListDriver() {
                   <th>No</th>
                   <th>Image</th>
                   <th>Nama Lengkap</th>
+                  <th>Motor</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -62,16 +95,13 @@ function ListDriver() {
                   {drivers.map((driver, index) => (
                     <tr key={driver._id}>
                       <td>{index + 1}</td>
-                      <td>
-                        {driver.imageProfile && (
-                          <img
-                            src={`data:image/jpeg;base64,${driver.imageProfile}`}
-                            alt="Gambar Profil"
-                            style={{ maxWidth: "100px" }}
-                          />
-                        )}
-                      </td>
+
                       <td>{driver.namaLengkap}</td>
+                      <td>
+                        <Button onClick={() => handleShowDriverModal(driver)}>
+                          View Profile & Motor
+                        </Button>
+                      </td>
 
                       <td>
                         <button onClick={() => setSelectedDriver(driver)}>
@@ -91,6 +121,39 @@ function ListDriver() {
                 onOrderSubmit={handleOrderSubmit}
               />
             )}
+
+            <Modal show={showDriverModal} onHide={handleHideDriverModal}>
+              <Modal.Header closeButton>
+                <Modal.Title>Driver Details</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <img
+                  src={`data:image/jpeg;base64,${selectedImage}`}
+                  alt="Gambar Profil"
+                  style={{ maxWidth: "50%" }}
+                />
+                {selectedMotorcycle ? (
+                  <div>
+                    <p>Merk: {selectedMotorcycle.merk}</p>
+                    <p>Tahun: {selectedMotorcycle.tahun}</p>
+                    <p>Plat Nomor: {selectedMotorcycle.platNomor}</p>
+                    <p>Warna: {selectedMotorcycle.warna}</p>
+                    <img
+                      src={`data:image/jpeg;base64,${selectedMotorcycle.imageMotorcycle}`}
+                      alt="Gambar Motor"
+                      style={{ maxWidth: "50%" }}
+                    />
+                  </div>
+                ) : (
+                  <p>No motorcycle data available</p>
+                )}
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={handleHideDriverModal}>
+                  Close
+                </Button>
+              </Modal.Footer>
+            </Modal>
           </Card.Body>
         </Card>
       </div>
