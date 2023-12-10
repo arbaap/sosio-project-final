@@ -68,14 +68,14 @@ router.post("/loginpelanggan", async (req, res) => {
   }
 });
 
-router.get("/getordersforpelanggan/:pelangganId", async (req, res) => {
-  const pelangganId = req.params.pelangganId;
-  try {
-    const orders = await Order.find({ pelangganId });
-    res.json(orders);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch orders for pelanggan" });
-  }
-});
+// router.get("/getordersforpelanggan/:pelangganId", async (req, res) => {
+//   const pelangganId = req.params.pelangganId;
+//   try {
+//     const orders = await Order.find({ pelangganId });
+//     res.json(orders);
+//   } catch (error) {
+//     res.status(500).json({ error: "Failed to fetch orders for pelanggan" });
+//   }
+// });
 
 module.exports = router;

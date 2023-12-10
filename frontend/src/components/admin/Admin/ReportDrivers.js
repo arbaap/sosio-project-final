@@ -2,6 +2,11 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Col, Row, Table } from "react-bootstrap";
 import Swal from "sweetalert2";
+import {
+  calculateTotalPages,
+  getPaginatedData,
+} from "../../utilities/pagniationTable";
+import PaginationUtils from "../../utilities/PaginationUtilis";
 
 function ReportDrivers() {
   const [drivers, setdrivers] = useState([]);
@@ -91,11 +96,11 @@ function ReportDrivers() {
     (driver) => driver.status === "Pending"
   );
 
-  const indexOfLastDrivers = currentPage * perPage;
-  const indexOfFirstDrivers = indexOfLastDrivers - perPage;
-  const currentKeluhans = filteredDrivers.slice(
-    indexOfFirstDrivers,
-    indexOfLastDrivers
+  const totalPages = calculateTotalPages(filteredDrivers.length, perPage);
+  const paginatedDrivers = getPaginatedData(
+    filteredDrivers,
+    currentPage,
+    perPage
   );
 
   return (
@@ -117,12 +122,11 @@ function ReportDrivers() {
             </tr>
           </thead>
           <tbody>
-            {currentKeluhans.length > 0 ? (
-              currentKeluhans.map((drivers, index) => (
+            {paginatedDrivers.length > 0 ? (
+              paginatedDrivers.map((drivers, index) => (
                 <tr key={drivers._id}>
-                  <td>{index + indexOfFirstDrivers + 1}</td>
+                  <td>{index + (currentPage - 1) * perPage + 1}</td>
                   <td>{drivers.namaLengkap}</td>
-
                   <td>{drivers.noTelepon}</td>
                   <td>{drivers.provinsi}</td>
                   <td>{drivers.kabupatenKota}</td>
@@ -157,43 +161,14 @@ function ReportDrivers() {
             )}
           </tbody>
         </Table>
-        <Pagination
+        <PaginationUtils
           currentPage={currentPage}
-          perPage={perPage}
-          totalKeluhans={drivers.length}
+          totalPages={totalPages}
           onPageChange={handlePageChange}
         />
       </Col>
     </Row>
   );
-
-  function Pagination({ currentPage, perPage, totalDrivers, onPageChange }) {
-    const pageNumbers = Math.ceil(totalDrivers / perPage);
-
-    return (
-      <nav>
-        <ul className="pagination">
-          {Array.from({ length: pageNumbers }, (_, i) => i + 1).map(
-            (pageNumber) => (
-              <li
-                key={pageNumber}
-                className={`page-item${
-                  currentPage === pageNumber ? " active" : ""
-                }`}
-              >
-                <button
-                  className="page-link"
-                  onClick={() => onPageChange(pageNumber)}
-                >
-                  {pageNumber}
-                </button>
-              </li>
-            )
-          )}
-        </ul>
-      </nav>
-    );
-  }
 }
 
 export default ReportDrivers;

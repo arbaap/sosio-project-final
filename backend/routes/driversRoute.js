@@ -111,14 +111,46 @@ router.post("/tolakdriver", async (req, res) => {
   }
 });
 
-router.get("/getordersfordriver/:driverId", async (req, res) => {
-  const driverId = req.params.driverId;
-  try {
-    const orders = await Order.find({ driverId });
-    res.json(orders);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch orders for driver" });
+// router.get("/getordersfordriver/:driverId", async (req, res) => {
+//   const driverId = req.params.driverId;
+//   try {
+//     const orders = await Order.find({ driverId });
+//     res.json(orders);
+//   } catch (error) {
+//     res.status(500).json({ error: "Failed to fetch orders for driver" });
+//   }
+// });
+
+router.post(
+  "/addmotor/:driverId",
+  upload.single("imageMotorcycle"),
+  async (req, res) => {
+    const driverId = req.params.driverId;
+    const { merk, tahun, platNomor, warna } = req.body;
+    const imageMotorcycle = req.file.buffer.toString("base64");
+
+    try {
+      const driver = await Driver.findById(driverId);
+
+      if (!driver) {
+        return res.status(404).json({ message: "Driver not found" });
+      }
+
+      driver.motorcycles.push({
+        merk,
+        tahun,
+        platNomor,
+        warna,
+        imageMotorcycle,
+      });
+
+      await driver.save();
+      console.log(driver);
+      res.send("Motor added successfully");
+    } catch (error) {
+      return res.status(400).json({ error });
+    }
   }
-});
+);
 
 module.exports = router;

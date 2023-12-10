@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Container, Table } from "react-bootstrap";
+import { Card, Container, Table, Spinner } from "react-bootstrap";
 import axios from "axios";
 import imageUrl from "../../assets/logo.png";
 import OrderForm from "./OrderForm";
@@ -9,6 +9,8 @@ function ListDriver() {
   const [selectedDriver, setSelectedDriver] = useState(null);
   const pelanggan = JSON.parse(sessionStorage.getItem("pelanggans"));
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     fetchDrivers();
   }, []);
@@ -17,8 +19,10 @@ function ListDriver() {
     try {
       const response = await axios.get("api/drivers/getalldrivers");
       setDrivers(response.data);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching drivers:", error);
+      setLoading(false);
     }
   };
 
@@ -33,41 +37,51 @@ function ListDriver() {
         <Card className="mb-3 catagory-card">
           <Card.Body>
             <Card.Title className="text-center">Daftar Driver</Card.Title>
-            <Table>
+
+            <Table responsive>
               <thead>
                 <tr>
                   <th>No</th>
                   <th>Image</th>
                   <th>Nama Lengkap</th>
-                  <th>Rating</th>
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody>
-                {drivers.map((driver, index) => (
-                  <tr key={driver._id}>
-                    <td>{index + 1}</td>
-                    <td>
-                      <img
-                        src={imageUrl}
-                        alt={`Profile of ${driver.namaLengkap}`}
-                        style={{
-                          width: "50px",
-                          height: "50px",
-                          borderRadius: "50%",
-                        }}
-                      />
-                    </td>
-                    <td>{driver.namaLengkap}</td>
-                    <td>*</td>
-                    <td>
-                      <button onClick={() => setSelectedDriver(driver)}>
-                        Order
-                      </button>
+              {loading ? (
+                <tbody>
+                  <tr>
+                    <td colSpan="6" className="text-center">
+                      <Spinner animation="border" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </Spinner>
                     </td>
                   </tr>
-                ))}
-              </tbody>
+                </tbody>
+              ) : (
+                <tbody>
+                  {drivers.map((driver, index) => (
+                    <tr key={driver._id}>
+                      <td>{index + 1}</td>
+                      <td>
+                        {driver.imageProfile && (
+                          <img
+                            src={`data:image/jpeg;base64,${driver.imageProfile}`}
+                            alt="Gambar Profil"
+                            style={{ maxWidth: "100px" }}
+                          />
+                        )}
+                      </td>
+                      <td>{driver.namaLengkap}</td>
+
+                      <td>
+                        <button onClick={() => setSelectedDriver(driver)}>
+                          Order
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              )}
             </Table>
             {selectedDriver && (
               <OrderForm

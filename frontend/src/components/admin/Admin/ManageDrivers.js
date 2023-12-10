@@ -47,11 +47,10 @@ export function ManageDrivers() {
           <thead>
             <tr>
               <th>No</th>
-              <th>Nama Warga</th>
-              <th>Judul Pengaduan</th>
-              <th>Alasan Ditolak</th>
+              <th>Nama Driver</th>
+              <th>Email</th>
+              <th>Alamat</th>
               <th>Status</th>
-              <th>Aksi</th>
             </tr>
           </thead>
           <tbody>
@@ -61,15 +60,13 @@ export function ManageDrivers() {
                 switch (driver.status) {
                   case "Pending":
                     return null;
-                  case "Diproses":
-                    statusClass = "status-diterima";
+                  case "Diterima":
+                    statusClass = "status-selesai";
                     break;
                   case "Ditolak":
                     statusClass = "status-ditolak";
                     break;
-                  case "Selesai":
-                    statusClass = "status-selesai";
-                    break;
+
                   default:
                     break;
                 }
@@ -80,6 +77,7 @@ export function ManageDrivers() {
                     <td>{driver.email}</td>
                     <td>{driver.alamat}</td>
                     <td className={statusClass}>{driver.status}</td>
+                    
                   </tr>
                 );
               })

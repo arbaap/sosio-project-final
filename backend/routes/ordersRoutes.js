@@ -126,7 +126,6 @@ router.post("/completeOrder", async (req, res) => {
   try {
     const orderItem = await Order.findOne({ _id: orderId });
 
-    // Pastikan order ditemukan
     if (!orderItem) {
       return res.status(404).json({ error: "Order not found" });
     }

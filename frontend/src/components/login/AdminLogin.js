@@ -4,7 +4,14 @@ import axios from "axios";
 import Card from "react-bootstrap/Card";
 import logo from "../../assets/logo.png";
 import Swal from "sweetalert2";
-import { Container, Form, Button, Row, Col, FloatingLabel } from "react-bootstrap";
+import {
+  Container,
+  Form,
+  Button,
+  Row,
+  Col,
+  FloatingLabel,
+} from "react-bootstrap";
 
 function LoginAdmin() {
   const [email, setEmail] = useState("");
@@ -14,7 +21,10 @@ function LoginAdmin() {
     password: true,
   });
 
+  const [loading, setLoading] = useState(false);
+
   async function Login() {
+    if (loading) return;
     if (!email || !password) {
       Swal.fire(
         "Peringatan",
@@ -33,6 +43,7 @@ function LoginAdmin() {
       Swal.fire("Peringatan", "Password harus minimal 8 karakter", "warning");
       return;
     }
+    setLoading(true);
     const admin = {
       email,
       password,
@@ -52,10 +63,10 @@ function LoginAdmin() {
           Swal.fire("Oops", "Something went wrong", "error");
         }
       } else if (error.request) {
-        // error server
       } else {
-        // error req
       }
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -118,8 +129,12 @@ function LoginAdmin() {
                   )}
                 </FloatingLabel>
 
-                <Button className="btnlogin btn btn-block" onClick={Login}>
-                  Masuk
+                <Button
+                  className="btnlogin btn btn-block"
+                  onClick={Login}
+                  disabled={loading}
+                >
+                  {loading ? "Loading..." : "Masuk"}
                 </Button>
               </Card.Text>
             </Card.Body>

@@ -78,6 +78,29 @@ const driverSchema = mongoose.Schema(
         additionalInfo: String,
       },
     ],
+    motorcycles: [
+      {
+        merk: {
+          type: String,
+          required: true,
+        },
+        tahun: {
+          type: Number,
+          required: true,
+        },
+        platNomor: {
+          type: String,
+          required: true,
+        },
+        warna: {
+          type: String,
+          required: true,
+        },
+        imageMotorcycle: {
+          type: String,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

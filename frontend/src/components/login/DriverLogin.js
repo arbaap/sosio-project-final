@@ -21,7 +21,11 @@ function DriverLogin() {
     password: true,
   });
 
+  const [loading, setLoading] = useState(false);
+
   async function Login() {
+    if (loading) return;
+
     if (!email || !password) {
       Swal.fire(
         "Peringatan",
@@ -40,6 +44,8 @@ function DriverLogin() {
       Swal.fire("Peringatan", "Password harus minimal 8 karakter", "warning");
       return;
     }
+
+    setLoading(true);
     const driver = {
       email,
       password,
@@ -59,10 +65,10 @@ function DriverLogin() {
           Swal.fire("Oops", "Something went wrong", "error");
         }
       } else if (error.request) {
-        // error server
       } else {
-        // error req
       }
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -110,7 +116,7 @@ function DriverLogin() {
                 >
                   <Form.Control
                     type="password"
-                    placeholder="Password (minimal 8 karakter)"
+                    placeholder="Password"
                     value={password}
                     onChange={(e) => {
                       setPassword(e.target.value);
@@ -123,8 +129,12 @@ function DriverLogin() {
                     </Form.Text>
                   )}
                 </FloatingLabel>
-                <Button className="btnlogin btn btn-block" onClick={Login}>
-                  Masuk
+                <Button
+                  className="btnlogin btn btn-block"
+                  onClick={Login}
+                  disabled={loading}
+                >
+                  {loading ? "Loading..." : "Masuk"}
                 </Button>
                 <p className="mt-3 text-center">
                   Belum punya akun? <a href="/registerdriver">Daftar Driver</a>

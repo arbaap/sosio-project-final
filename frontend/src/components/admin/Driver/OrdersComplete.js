@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Table, Container } from "react-bootstrap";
+import { Table, Container, Spinner } from "react-bootstrap";
 import { getStatusClass } from "../../utilities/statusClass";
 
 function OrdersComplete() {
@@ -8,15 +9,17 @@ function OrdersComplete() {
   const drivers = JSON.parse(sessionStorage.getItem("drivers"));
   const driverId = drivers ? drivers._id : null;
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     if (driverId) {
       fetchOrders();
     }
-  });
+  }, [driverId]);
 
   useEffect(() => {
     fetchOrders();
-  });
+  }, []);
 
   const fetchOrders = async () => {
     try {
@@ -24,8 +27,10 @@ function OrdersComplete() {
         `/api/orders/ordersfordriver/${driverId}`
       );
       setOrders(response.data);
+      setLoading(false);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -43,20 +48,40 @@ function OrdersComplete() {
             <th>Status Order</th>
           </tr>
         </thead>
-        <tbody>
-          {orders
-            .filter((order) => order.statusOrder === "Selesai Order")
-            .map((order, index) => (
-              <tr key={order._id}>
-                <td>{index + 1}</td>
-                <td>{order.pelangganName}</td>
-                <td>{order.additionalInfo}</td>
-                <td className={getStatusClass(order.statusOrder)}>
-                  {order.statusOrder}
+        {loading ? (
+          <tbody>
+            <tr>
+              <td colSpan="6" className="text-center">
+                <Spinner animation="border" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
+              </td>
+            </tr>
+          </tbody>
+        ) : (
+          <tbody>
+            {orders.length > 0 ? (
+              orders
+                .filter((order) => order.statusOrder === "Selesai Order")
+                .map((order, index) => (
+                  <tr key={order._id}>
+                    <td>{index + 1}</td>
+                    <td>{order.pelangganName}</td>
+                    <td>{order.additionalInfo}</td>
+                    <td className={getStatusClass(order.statusOrder)}>
+                      {order.statusOrder}
+                    </td>
+                  </tr>
+                ))
+            ) : (
+              <tr>
+                <td className="text-center" colSpan="7">
+                  Tidak ada data.
                 </td>
               </tr>
-            ))}
-        </tbody>
+            )}
+          </tbody>
+        )}
       </Table>
     </Container>
   );

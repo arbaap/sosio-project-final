@@ -76,7 +76,6 @@ function RegisterDriver() {
       return;
     }
 
-    // Validasi panjang password
     if (password.length < 8) {
       Swal.fire("Peringatan", "Password harus minimal 8 karakter", "warning");
       return;

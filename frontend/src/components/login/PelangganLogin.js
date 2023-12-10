@@ -21,7 +21,10 @@ function PelangganLogin() {
     password: true,
   });
 
+  const [loading, setLoading] = useState(false);
+
   async function Login() {
+    if (loading) return;
     if (!email || !password) {
       Swal.fire(
         "Peringatan",
@@ -40,6 +43,7 @@ function PelangganLogin() {
       Swal.fire("Peringatan", "Password harus minimal 8 karakter", "warning");
       return;
     }
+    setLoading(true);
     const pelanggas = {
       email,
       password,
@@ -61,10 +65,10 @@ function PelangganLogin() {
           Swal.fire("Oops", "Something went wrong", "error");
         }
       } else if (error.request) {
-        // error server
       } else {
-        // error req
       }
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -127,9 +131,12 @@ function PelangganLogin() {
                     </Form.Text>
                   )}
                 </FloatingLabel>
-
-                <Button className="btnlogin btn btn-block" onClick={Login}>
-                  Masuk
+                <Button
+                  className="btnlogin btn btn-block"
+                  onClick={Login}
+                  disabled={loading}
+                >
+                  {loading ? "Loading..." : "Masuk"}
                 </Button>
                 <p className="mt-3 text-center">
                   Belum punya akun?{" "}
