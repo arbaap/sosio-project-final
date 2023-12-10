@@ -205,7 +205,8 @@ b {
 }
 
 .terimakeluhan,
-.tolakkeluhan {
+.tolakkeluhan,
+.selesaiorder {
   color: white;
   border: none;
   border-radius: 10px 15px 10px 20px;
@@ -216,6 +217,10 @@ b {
 
 .terimakeluhan {
   background-color: #14bd96;
+}
+
+.selesaiorder {
+  background-color: #02a0fc;
 }
 
 .tolakkeluhan {
@@ -302,15 +307,15 @@ b {
   color: #fec400;
 }
 
-.status-diterima {
-  color: #fec400;
+.status-selesai {
+  color: #02a0fc;
 }
 
 .status-ditolak {
   color: #f12b2c;
 }
 
-.status-selesai {
+.status-diterima {
   color: #14bd96;
 }
 

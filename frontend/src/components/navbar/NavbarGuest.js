@@ -15,7 +15,6 @@ const NavbarGuest = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto right">
             <Nav.Link href="/home">Home</Nav.Link>
-            <Nav.Link href="/registerpelanggan">Daftar Pelanggan</Nav.Link>
             <Nav.Link href="/loginpelanggan">Login</Nav.Link>
           </Nav>
         </Navbar.Collapse>

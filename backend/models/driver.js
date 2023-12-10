@@ -53,9 +53,12 @@ const driverSchema = mongoose.Schema(
     kecamatanDesa: {
       type: String,
     },
+    imageProfile: {
+      type: String,
+    },
     status: {
       type: String,
-      rqeuired: true,
+      required: true,
       default: "Pending",
     },
     alasanPenolakan: {
@@ -65,6 +68,39 @@ const driverSchema = mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    orders: [
+      {
+        orderId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "order",
+        },
+        pelangganName: String,
+        additionalInfo: String,
+      },
+    ],
+    motorcycles: [
+      {
+        merk: {
+          type: String,
+          required: true,
+        },
+        tahun: {
+          type: Number,
+          required: true,
+        },
+        platNomor: {
+          type: String,
+          required: true,
+        },
+        warna: {
+          type: String,
+          required: true,
+        },
+        imageMotorcycle: {
+          type: String,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

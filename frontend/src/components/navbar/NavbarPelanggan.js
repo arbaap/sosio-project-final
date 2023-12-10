@@ -62,7 +62,6 @@ const NavbarPelanggan = () => {
             ) : (
               <>
                 <Nav.Link href="/home">Home</Nav.Link>
-                <Nav.Link href="/registerpelanggan">Daftar Pelanggan</Nav.Link>
                 <Nav.Link href="/loginpelanggan">Login</Nav.Link>
               </>
             )}

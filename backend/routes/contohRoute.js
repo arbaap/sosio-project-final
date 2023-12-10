@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
 
-const Keluhan = require("../models/keluhan");
-
 router.get("/getallkeluhans", async (req, res) => {
   try {
     const keluhans = await Keluhan.find({});

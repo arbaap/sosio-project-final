@@ -50,6 +50,24 @@ const pelangganSchema = mongoose.Schema(
     kabupatenKota: {
       type: String,
     },
+    orders: [
+      {
+        orderId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "order",
+        },
+        driverName: String,
+        additionalInfo: String,
+      },
+    ],
+    lastOrder: {
+      orderId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "order",
+      },
+      driverName: String,
+      additionalInfo: String,
+    },
   },
   {
     timestamps: true,

@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Card, Container, Table } from "react-bootstrap";
+import {
+  Card,
+  Container,
+  Table,
+  Spinner,
+  Modal,
+  Button,
+} from "react-bootstrap";
 import axios from "axios";
 import imageUrl from "../../assets/logo.png";
 import OrderForm from "./OrderForm";
@@ -9,6 +16,11 @@ function ListDriver() {
   const [selectedDriver, setSelectedDriver] = useState(null);
   const pelanggan = JSON.parse(sessionStorage.getItem("pelanggans"));
 
+  const [loading, setLoading] = useState(true);
+  const [showDriverModal, setShowDriverModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedMotorcycle, setSelectedMotorcycle] = useState(null);
+
   useEffect(() => {
     fetchDrivers();
   }, []);
@@ -16,9 +28,23 @@ function ListDriver() {
   const fetchDrivers = async () => {
     try {
       const response = await axios.get("api/drivers/getalldrivers");
-      setDrivers(response.data);
+      const driversWithMotorcycles = response.data.map((driver) => {
+        const motorcycle =
+          driver.motorcycles && driver.motorcycles.length > 0
+            ? driver.motorcycles[0]
+            : null;
+
+        return {
+          ...driver,
+          motorcycle: motorcycle,
+        };
+      });
+
+      setDrivers(driversWithMotorcycles);
+      setLoading(false);
     } catch (error) {
       console.error("Error fetching drivers:", error);
+      setLoading(false);
     }
   };
 
@@ -27,7 +53,15 @@ function ListDriver() {
     setSelectedDriver(null);
   };
 
-  
+  const handleShowDriverModal = (driver) => {
+    setSelectedImage(driver.imageProfile);
+    setSelectedMotorcycle(driver.motorcycle);
+    setShowDriverModal(true);
+  };
+
+  const handleHideDriverModal = () => {
+    setShowDriverModal(false);
+  };
 
   return (
     <Container>
@@ -35,41 +69,49 @@ function ListDriver() {
         <Card className="mb-3 catagory-card">
           <Card.Body>
             <Card.Title className="text-center">Daftar Driver</Card.Title>
-            <Table>
+
+            <Table responsive>
               <thead>
                 <tr>
                   <th>No</th>
                   <th>Image</th>
                   <th>Nama Lengkap</th>
-                  <th>Rating</th>
+                  <th>Motor</th>
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody>
-                {drivers.map((driver, index) => (
-                  <tr key={driver._id}>
-                    <td>{index + 1}</td>
-                    <td>
-                      <img
-                        src={imageUrl}
-                        alt={`Profile of ${driver.namaLengkap}`}
-                        style={{
-                          width: "50px",
-                          height: "50px",
-                          borderRadius: "50%",
-                        }}
-                      />
-                    </td>
-                    <td>{driver.namaLengkap}</td>
-                    <td>*</td>
-                    <td>
-                      <button onClick={() => setSelectedDriver(driver)}>
-                        Order
-                      </button>
+              {loading ? (
+                <tbody>
+                  <tr>
+                    <td colSpan="6" className="text-center">
+                      <Spinner animation="border" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </Spinner>
                     </td>
                   </tr>
-                ))}
-              </tbody>
+                </tbody>
+              ) : (
+                <tbody>
+                  {drivers.map((driver, index) => (
+                    <tr key={driver._id}>
+                      <td>{index + 1}</td>
+
+                      <td>{driver.namaLengkap}</td>
+                      <td>
+                        <Button onClick={() => handleShowDriverModal(driver)}>
+                          View Profile & Motor
+                        </Button>
+                      </td>
+
+                      <td>
+                        <button onClick={() => setSelectedDriver(driver)}>
+                          Order
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              )}
             </Table>
             {selectedDriver && (
               <OrderForm
@@ -79,6 +121,39 @@ function ListDriver() {
                 onOrderSubmit={handleOrderSubmit}
               />
             )}
+
+            <Modal show={showDriverModal} onHide={handleHideDriverModal}>
+              <Modal.Header closeButton>
+                <Modal.Title>Driver Details</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <img
+                  src={`data:image/jpeg;base64,${selectedImage}`}
+                  alt="Gambar Profil"
+                  style={{ maxWidth: "50%" }}
+                />
+                {selectedMotorcycle ? (
+                  <div>
+                    <p>Merk: {selectedMotorcycle.merk}</p>
+                    <p>Tahun: {selectedMotorcycle.tahun}</p>
+                    <p>Plat Nomor: {selectedMotorcycle.platNomor}</p>
+                    <p>Warna: {selectedMotorcycle.warna}</p>
+                    <img
+                      src={`data:image/jpeg;base64,${selectedMotorcycle.imageMotorcycle}`}
+                      alt="Gambar Motor"
+                      style={{ maxWidth: "50%" }}
+                    />
+                  </div>
+                ) : (
+                  <p>No motorcycle data available</p>
+                )}
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={handleHideDriverModal}>
+                  Close
+                </Button>
+              </Modal.Footer>
+            </Modal>
           </Card.Body>
         </Card>
       </div>

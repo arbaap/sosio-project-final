@@ -25,6 +25,11 @@ const orderSchema = mongoose.Schema(
     additionalInfo: {
       type: String,
     },
+    statusOrder: {
+      type: String,
+      rqeuired: true,
+      default: "Pending",
+    },
   },
   {
     timestamps: true,

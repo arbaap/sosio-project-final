@@ -4,68 +4,144 @@ import axios from "axios";
 import Card from "react-bootstrap/Card";
 import logo from "../../assets/logo.png";
 import Swal from "sweetalert2";
+import {
+  Container,
+  Form,
+  Button,
+  Row,
+  Col,
+  FloatingLabel,
+} from "react-bootstrap";
 
 function LoginAdmin() {
-  const [email, setemail] = useState("");
-  const [password, setpassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [validation, setValidation] = useState({
+    email: true,
+    password: true,
+  });
+
+  const [loading, setLoading] = useState(false);
 
   async function Login() {
-    const pengguna = {
+    if (loading) return;
+    if (!email || !password) {
+      Swal.fire(
+        "Peringatan",
+        "Harap isi semua kolom yang diperlukan",
+        "warning"
+      );
+      return;
+    }
+
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      Swal.fire("Peringatan", "Format email tidak valid", "warning");
+      return;
+    }
+
+    if (password.length < 8) {
+      Swal.fire("Peringatan", "Password harus minimal 8 karakter", "warning");
+      return;
+    }
+    setLoading(true);
+    const admin = {
       email,
       password,
     };
-    console.log(pengguna);
+    console.log(admin);
     try {
-      const result = (await axios.post("/api/penggunas/login", pengguna)).data;
+      const result = (await axios.post("/api/admins/login", admin)).data;
       Swal.fire("Okay", "Login Berhasil", "success").then((result) => {
         window.location.href = "/admin";
       });
-      sessionStorage.setItem("pengguna", JSON.stringify(result));
+      sessionStorage.setItem("admin", JSON.stringify(result));
     } catch (error) {
-      Swal.fire("oops", "something went wrong", "error");
+      if (error.response) {
+        if (error.response.status === 400) {
+          Swal.fire("Oops", error.response.data.message, "error");
+        } else {
+          Swal.fire("Oops", "Something went wrong", "error");
+        }
+      } else if (error.request) {
+      } else {
+      }
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
-    <div className="container">
-      <div className="row justify-content-center mt-5">
-        <div className="col">
+    <Container>
+      <Row className="row justify-content-center mt-5">
+        <Col className="col">
           <Card className="cardmodal">
             <Card.Body>
               <Card.Title className="text-center">
                 <img className="img-logo" src={logo} alt="" />
-                <h2>Selamat datang di</h2>
-                <h1>Sistem Informasi Pengaduan Masyarakat Desa Kosar</h1>
+                <h2>Admin Login</h2>
               </Card.Title>
               <Card.Text>
                 <h2 className="judullogin">Masuk</h2>
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="email"
-                  value={email}
-                  onChange={(e) => {
-                    setemail(e.target.value);
-                  }}
-                />
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="password"
-                  value={password}
-                  onChange={(e) => {
-                    setpassword(e.target.value);
-                  }}
-                />
-                <button className="btnlogin btn btn-block" onClick={Login}>
-                  Masuk
-                </button>
+                <FloatingLabel
+                  controlId="floatingInput"
+                  label="Email address"
+                  className="mb-3"
+                >
+                  <Form.Control
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setValidation((prevValidation) => ({
+                        ...prevValidation,
+                        email:
+                          !e.target.value ||
+                          /^\S+@\S+\.\S+$/.test(e.target.value),
+                      }));
+                    }}
+                  />
+                  {!validation.email && email.length > 0 && (
+                    <Form.Text className="text-danger">
+                      Format email tidak valid
+                    </Form.Text>
+                  )}
+                </FloatingLabel>
+
+                <FloatingLabel
+                  controlId="floatingInput"
+                  label="Password"
+                  className="mb-3"
+                >
+                  <Form.Control
+                    type="password"
+                    placeholder="Password (minimal 8 karakter)"
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                    }}
+                    minLength="8"
+                  />
+                  {password.length > 0 && password.length < 8 && (
+                    <Form.Text className="text-danger">
+                      Password harus minimal 8 karakter
+                    </Form.Text>
+                  )}
+                </FloatingLabel>
+
+                <Button
+                  className="btnlogin btn btn-block"
+                  onClick={Login}
+                  disabled={loading}
+                >
+                  {loading ? "Loading..." : "Masuk"}
+                </Button>
               </Card.Text>
             </Card.Body>
           </Card>
-        </div>
-      </div>
-    </div>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 
