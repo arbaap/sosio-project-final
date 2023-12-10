@@ -68,6 +68,38 @@ router.post("/loginpelanggan", async (req, res) => {
   }
 });
 
+router.post("/terimapelanggan", async (req, res) => {
+  const { pelangganid } = req.body;
+
+  try {
+    const pelanggan = await Pelanggan.findOne({ _id: pelangganid });
+
+    pelanggan.status = "Diterima";
+    pelanggan.isPelanggan = true;
+    await pelanggan.save();
+
+    res.send("pelanggan diterima");
+  } catch (error) {
+    return res.status(400).json({ error });
+  }
+});
+
+router.post("/tolakpelanggan", async (req, res) => {
+  const { pelangganid, alasanPenolakan } = req.body;
+
+  try {
+    const pelanggan = await Pelanggan.findOne({ _id: pelangganid });
+
+    pelanggan.status = "Ditolak";
+    pelanggan.alasanPenolakan = alasanPenolakan;
+    await pelanggan.save();
+
+    res.send("Driver ditolak");
+  } catch (error) {
+    return res.status(400).json({ error });
+  }
+});
+
 // router.get("/getordersforpelanggan/:pelangganId", async (req, res) => {
 //   const pelangganId = req.params.pelangganId;
 //   try {
