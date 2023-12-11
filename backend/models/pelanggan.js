@@ -68,6 +68,14 @@ const pelangganSchema = mongoose.Schema(
       driverName: String,
       additionalInfo: String,
     },
+    status: {
+      type: String,
+      required: true,
+      default: "Pending",
+    },
+    alasanPenolakan: {
+      type: String,
+    },
   },
   {
     timestamps: true,

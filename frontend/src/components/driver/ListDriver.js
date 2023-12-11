@@ -8,8 +8,8 @@ import {
   Button,
 } from "react-bootstrap";
 import axios from "axios";
-import imageUrl from "../../assets/logo.png";
 import OrderForm from "./OrderForm";
+import Swal from "sweetalert2";
 
 function ListDriver() {
   const [drivers, setDrivers] = useState([]);
@@ -21,13 +21,46 @@ function ListDriver() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedMotorcycle, setSelectedMotorcycle] = useState(null);
 
+  const [loadingMessage, setLoadingMessage] = useState("");
+
   useEffect(() => {
-    fetchDrivers();
+    const timer = setTimeout(() => {
+      setLoadingMessage("Membutuhkan Proses Lebih Lama...");
+    }, 3000);
+    return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (!pelanggan) {
+      Swal.fire({
+        title: "Akses Ditolak",
+        text: "Anda belum login . silahkan login terlebih dahulu ",
+        icon: "warning",
+        confirmButtonText: "OK",
+      }).then(() => {
+        window.location.href = "/loginpelanggan";
+      });
+      return;
+    }
+
+    if (pelanggan.status !== "Diterima") {
+      Swal.fire({
+        title: "Akses Ditolak",
+        text: "Anda tidak terdaftar sebagai mahasiswa UIN Bandung . hubungi nomor dibawah ini ",
+        icon: "warning",
+        confirmButtonText: "OK",
+      }).then(() => {
+        window.location.href = "/";
+      });
+      return;
+    }
+
+    fetchDrivers();
+  }, [pelanggan]);
 
   const fetchDrivers = async () => {
     try {
-      const response = await axios.get("api/drivers/getalldrivers");
+      const response = await axios.get("/api/drivers/getalldrivers");
       const driversWithMotorcycles = response.data.map((driver) => {
         const motorcycle =
           driver.motorcycles && driver.motorcycles.length > 0
@@ -87,6 +120,8 @@ function ListDriver() {
                       <Spinner animation="border" role="status">
                         <span className="visually-hidden">Loading...</span>
                       </Spinner>
+                      <br />
+                      {loadingMessage}
                     </td>
                   </tr>
                 </tbody>

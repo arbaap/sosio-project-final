@@ -39,12 +39,15 @@ function ManagePelanggans() {
     perPage
   );
 
-  const terimaDriver = async (driverid) => {
+  const terimaPelanggan = async (pelangganid) => {
     try {
       const result = await (
-        await axios.post("/api/drivers/terimadriver", {
-          driverid,
-        })
+        await axios.post(
+          "https://uinjek-backend.vercel.app/api/pelanggans/terimapelanggan",
+          {
+            pelangganid,
+          }
+        )
       ).data;
       console.log(result);
       Swal.fire("Okay", "Driver Diterima", "success").then((result) => {
@@ -56,7 +59,7 @@ function ManagePelanggans() {
     }
   };
 
-  const tolakDriver = async (driverid) => {
+  const tolakPelanggan = async (pelangganid) => {
     try {
       const result = await Swal.fire({
         title: "Alasan Penolakan",
@@ -68,10 +71,13 @@ function ManagePelanggans() {
         showLoaderOnConfirm: true,
         preConfirm: (alasan) => {
           return axios
-            .post("/api/drivers/tolakdriver", {
-              driverid,
-              alasanPenolakan: alasan,
-            })
+            .post(
+              "https://uinjek-backend.vercel.app/api/pelanggans/tolakpelanggan",
+              {
+                pelangganid,
+                alasanPenolakan: alasan,
+              }
+            )
             .then((response) => {
               if (response.data === "Driver ditolak") {
                 Swal.fire(
@@ -136,7 +142,7 @@ function ManagePelanggans() {
                       {pelanggans.status !== "pending" && (
                         <button
                           className="terimakeluhan btn-success"
-                          onClick={() => terimaDriver(pelanggans._id)}
+                          onClick={() => terimaPelanggan(pelanggans._id)}
                         >
                           Terima
                         </button>
@@ -144,7 +150,7 @@ function ManagePelanggans() {
                       {pelanggans.status !== "pending" && (
                         <button
                           className="tolakkeluhan btn-danger"
-                          onClick={() => tolakDriver(pelanggans._id)}
+                          onClick={() => tolakPelanggan(pelanggans._id)}
                         >
                           Tolak
                         </button>
@@ -172,3 +178,4 @@ function ManagePelanggans() {
   );
 }
 export default ManagePelanggans;
+
