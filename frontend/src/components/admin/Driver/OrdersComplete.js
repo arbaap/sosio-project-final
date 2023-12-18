@@ -45,6 +45,8 @@ function OrdersComplete() {
             <th>No</th>
             <th>Nama Pelanggan</th>
             <th>Additional Info</th>
+            <th>Penjemputan</th>
+            <th>Tujuan</th>
             <th>Status Order</th>
           </tr>
         </thead>
@@ -68,6 +70,8 @@ function OrdersComplete() {
                     <td>{index + 1}</td>
                     <td>{order.pelangganName}</td>
                     <td>{order.additionalInfo}</td>
+                    <td>{order.titikPenjemputan}</td>
+                    <td>{order.titikTujuan}</td>
                     <td className={getStatusClass(order.statusOrder)}>
                       {order.statusOrder}
                     </td>

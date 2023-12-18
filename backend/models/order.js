@@ -25,6 +25,26 @@ const orderSchema = mongoose.Schema(
     additionalInfo: {
       type: String,
     },
+    titikPenjemputan: {
+      type: String,
+    },
+    titikTujuan: {
+      type: String,
+    },
+    pembayaran: {
+      type: String,
+    },
+    spesifikPembayaran: {
+      type: String,
+      required: function () {
+        return (
+          this.pembayaran === "m-banking" || this.pembayaran === "e-wallet"
+        );
+      },
+    },
+    harga: {
+      type: String,
+    },
     statusOrder: {
       type: String,
       rqeuired: true,

@@ -25,7 +25,7 @@ const NavbarPageDriver = () => {
       if (result.isConfirmed) {
         sessionStorage.removeItem("drivers");
         Swal.fire("Okay", "Logout Berhasil", "success").then(() => {
-          window.location.href = "/logindriver";
+          window.location.href = "/home";
         });
       }
     });
