@@ -96,6 +96,15 @@ function ListDriver() {
     setShowDriverModal(false);
   };
 
+  const handleNegotiate = (driver) => {
+    const negotiatedMessage = "Hai, bisa nego harga?";
+
+    const whatsappUrl = `https://wa.me/${
+      driver.noTelepon
+    }?text=${encodeURIComponent(negotiatedMessage)}`;
+    window.open(whatsappUrl);
+  };
+
   return (
     <Container>
       <div className="tampilan home">
@@ -106,11 +115,10 @@ function ListDriver() {
             <Table responsive>
               <thead>
                 <tr>
-                  <th>No</th>
-                  <th>Image</th>
                   <th>Nama Lengkap</th>
-                  <th>Motor</th>
-                  <th>Action</th>
+                  <th>Data</th>
+                  <th>Order</th>
+                  <th>Negosiasi</th>
                 </tr>
               </thead>
               {loading ? (
@@ -127,21 +135,25 @@ function ListDriver() {
                 </tbody>
               ) : (
                 <tbody>
-                  {drivers.map((driver, index) => (
+                  {drivers.map((driver) => (
                     <tr key={driver._id}>
-                      <td>{index + 1}</td>
-
                       <td>{driver.namaLengkap}</td>
                       <td>
                         <Button onClick={() => handleShowDriverModal(driver)}>
-                          View Profile & Motor
+                          Lihat Driver
                         </Button>
                       </td>
 
                       <td>
-                        <button onClick={() => setSelectedDriver(driver)}>
+                        <Button onClick={() => setSelectedDriver(driver)}>
                           Order
-                        </button>
+                        </Button>
+                      </td>
+
+                      <td>
+                        <Button onClick={() => handleNegotiate(driver)}>
+                          Nego Harga
+                        </Button>
                       </td>
                     </tr>
                   ))}
@@ -161,7 +173,7 @@ function ListDriver() {
               <Modal.Header closeButton>
                 <Modal.Title>Driver Details</Modal.Title>
               </Modal.Header>
-              <Modal.Body>
+              <Modal.Body className="text-center">
                 <img
                   src={`data:image/jpeg;base64,${selectedImage}`}
                   alt="Gambar Profil"

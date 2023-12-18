@@ -24,7 +24,7 @@ const NavbarAdmin = () => {
       if (result.isConfirmed) {
         sessionStorage.removeItem("admin");
         Swal.fire("Okay", "Logout Berhasil", "success").then(() => {
-          window.location.href = "/loginadmin";
+          window.location.href = "/home";
         });
       }
     });

@@ -109,8 +109,9 @@ export function History() {
             <th>No</th>
             <th>Nama Driver</th>
             <th>Additional Info</th>
-            <th>Status Order</th>
+            <th>Tujuan</th>
             <th>Biaya</th>
+            <th>Status Order</th>
           </tr>
         </thead>
         <tbody>
@@ -119,6 +120,8 @@ export function History() {
               <td>{index + 1}</td>
               <td>{order.driverName}</td>
               <td>{order.additionalInfo}</td>
+              <td>{order.titikTujuan}</td>
+              <td>{order.harga}</td>
               <td>{order.statusOrder}</td>
             </tr>
           ))}

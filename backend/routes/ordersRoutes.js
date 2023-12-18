@@ -6,7 +6,16 @@ const Pelanggan = require("../models/pelanggan");
 const Driver = require("../models/driver");
 
 router.post("/submitorder", async (req, res) => {
-  const { driverId, pelangganId, additionalInfo } = req.body;
+  const {
+    driverId,
+    pelangganId,
+    additionalInfo,
+    titikPenjemputan,
+    titikTujuan,
+    pembayaran,
+    spesifikPembayaran,
+    harga,
+  } = req.body;
 
   try {
     const pelanggan = await Pelanggan.findById(pelangganId);
@@ -16,6 +25,10 @@ router.post("/submitorder", async (req, res) => {
       driverId,
       pelangganId,
       additionalInfo,
+      titikPenjemputan,
+      titikTujuan,
+      pembayaran: `${pembayaran} - ${spesifikPembayaran || ""}`,
+      harga,
       pelangganName: pelanggan.namaLengkap,
       driverName: driver.namaLengkap,
     });
@@ -30,6 +43,10 @@ router.post("/submitorder", async (req, res) => {
             orderId: savedOrder._id,
             driverName: driver.namaLengkap,
             additionalInfo: additionalInfo,
+            titikPenjemputan: titikPenjemputan,
+            titikTujuan: titikTujuan,
+            pembayaran: pembayaran,
+            harga: harga,
           },
         },
         $set: {
@@ -37,6 +54,10 @@ router.post("/submitorder", async (req, res) => {
             orderId: savedOrder._id,
             driverName: driver.namaLengkap,
             additionalInfo: additionalInfo,
+            titikPenjemputan: titikPenjemputan,
+            titikTujuan: titikTujuan,
+            pembayaran: pembayaran,
+            harga: harga,
           },
         },
       },
@@ -47,6 +68,10 @@ router.post("/submitorder", async (req, res) => {
       orderId: savedOrder._id,
       pelangganName: pelanggan.namaLengkap,
       additionalInfo: additionalInfo,
+      titikPenjemputan: titikPenjemputan,
+      titikTujuan: titikTujuan,
+      pembayaran: pembayaran,
+      harga: harga,
     });
 
     await pelanggan.save();
