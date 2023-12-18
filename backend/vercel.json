@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "uinjek.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    { "src": "/api/admins/(.*)", "dest": "uinjek.js" },
+    { "src": "/api/drivers/(.*)", "dest": "uinjek.js" },
+    { "src": "/api/pelanggans/(.*)", "dest": "uinjek.js" },
+    { "src": "/api/orders/(.*)", "dest": "uinjek.js" },
+    { "src": "/api/test/(.*)", "dest": "uinjek.js" },
+    { "src": "/(.*)", "dest": "uinjek.js" }
+  ]
+}
